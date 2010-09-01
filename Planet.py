@@ -26,24 +26,20 @@ class Planet:
         elif self.row_lengths[row] > 1:
             yield (row, 0)
 
-        if row > 0:
-            if self.row_lengths[row] == self.row_lengths[row-1]:
-                yield (row-1,column)
-            else:
-                m = float(self.row_lengths[row-1])/self.row_lengths[row]
+        # adjacent rows
+        for nrow in (row-1,row+1):
+            if self.row_lengths[nrow]:
+                m = float(self.row_lengths[nrow])/self.row_lengths[row]
                 start = int(column * m)
                 end = int((column + 1) * m)
                 end = end + 1 if end == start else end
+                if start < 0:
+                    for c in range (start, 0):
+                        yield (nrow, self.row_lengths[nrow] + c)
+                    start = 0
+                if end > self.row_lengths[nrow]:
+                    for c in range(self.row_lengths[nrow], end):
+                        yield (nrow, c - self.row_lengths[nrow])
+                    end = self.row_lengths[nrow]
                 for c in range(start, end):
-                    yield (row-1,c)
-                
-        if row < self.row_count-1:
-            if self.row_lengths[row] == self.row_lengths[row+1]:
-                yield (row+1,column)
-            else:
-                m = float(self.row_lengths[row+1])/self.row_lengths[row]
-                start = int(column * m)
-                end = int((column + 1) * m)
-                end = end + 1 if end == start else end
-                for c in range(start, end):
-                    yield (row+1,c)
+                    yield (nrow, c)
