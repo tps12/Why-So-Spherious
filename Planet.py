@@ -31,9 +31,10 @@ class Planet:
                 yield (row-1,column)
             else:
                 m = float(self.row_lengths[row-1])/self.row_lengths[row]
-                start = (column - self.row_offsets[row]) * m + self.row_offsets[row-1]
-                end = (column + 1 - self.row_offsets[row]) * m + self.row_offsets[row-1]
-                for c in range(int(start), int(end)):
+                start = int(column * m)
+                end = int((column + 1) * m)
+                end = end + 1 if end == start else end
+                for c in range(start, end):
                     yield (row-1,c)
                 
         if row < self.row_count-1:
@@ -41,7 +42,8 @@ class Planet:
                 yield (row+1,column)
             else:
                 m = float(self.row_lengths[row+1])/self.row_lengths[row]
-                start = (column - self.row_offsets[row]) * m + self.row_offsets[row+1]
-                end = (column + 1 - self.row_offsets[row]) * m + self.row_offsets[row+1]
-                for c in range(int(start), int(end)):
+                start = int(column * m)
+                end = int((column + 1) * m)
+                end = end + 1 if end == start else end
+                for c in range(start, end):
                     yield (row+1,c)
