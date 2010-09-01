@@ -45,7 +45,7 @@ class Display:
             point.rect = pygame.Rect(
                 (column + planet.row_offsets[row] - point.image.get_width()/2,
                  row - point.image.get_height()/2),
-                point.image.get_size())
+                point.image.get_size())   
             points.add(point)
 
         limit = pygame.time.Clock()
@@ -61,14 +61,14 @@ class Display:
                         done = True
                         
             for point in points:
-                row = point.rect.top + point.image.get_height()/2
-                column = point.rect.left - planet.row_offsets[row] + point.image.get_width()/2
+                row = int(point.rect.top + point.image.get_height()/2)
+                column = int(point.rect.left - planet.row_offsets[row] + point.image.get_width()/2)
                 adjacent = [a for a in planet.adjacent(row, column)]
                 i = random.randint(0, len(adjacent))-1
                 if i >= 0:
                     nrow, ncolumn = adjacent[i]
-                    point.rect.left = ncolumn + planet.row_offsets[nrow] - point.image.get_width()/2
-                    point.rect.top = nrow - point.image.get_height()/2
+                    point.rect.left = float(ncolumn + planet.row_offsets[nrow] - point.image.get_width()/2)
+                    point.rect.top = float(nrow - point.image.get_height()/2)
 
             points.clear(screen, background)
             points.draw(screen)
