@@ -31,8 +31,7 @@ class Planet:
             if self.row_lengths[nrow]:
                 m = float(self.row_lengths[nrow])/self.row_lengths[row]
                 start = int(column * m)
-                end = int((column + 1) * m)
-                end = end + 1 if end == start else end
+                end = int((column + 1) * m) + 1
                 if start < 0:
                     for c in range (start, 0):
                         yield (nrow, self.row_lengths[nrow] + c)
