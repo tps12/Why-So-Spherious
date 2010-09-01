@@ -28,7 +28,7 @@ class Planet:
 
         # adjacent rows
         for nrow in (row-1,row+1):
-            if self.row_lengths[nrow]:
+            if nrow >= 0 and nrow < self.row_count -1 and self.row_lengths[nrow]:
                 m = float(self.row_lengths[nrow])/self.row_lengths[row]
                 start = int(column * m)
                 end = int((column + 1) * m) + 1
