@@ -31,11 +31,14 @@ class Display:
                         done = True
 
             screen.blit(background, (0,0))
+            screen.lock()
             for y in range(0, screen.get_height()):
                 for x in range(0, screen.get_width()):
                     if (x > planet.row_offsets[y] and
-                        x <= planet.row_offsets[y] + planet.row_lengths[y]):
-                        screen.set_at((x,y),(0,0,0))
+                        x < planet.row_offsets[y] + planet.row_lengths[y]):
+                        value = planet.rows[y][x - planet.row_offsets[y]]
+                        screen.set_at((x,y),(value,0,0))
+            screen.unlock()
             
             pygame.display.flip()
 
