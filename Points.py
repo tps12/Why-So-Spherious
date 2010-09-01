@@ -17,19 +17,22 @@ class Display:
                                          HWSURFACE)
         pygame.display.set_caption('Planet')
 
-        screen.fill((128,128,128))
+        background = pygame.Surface(screen.get_size())
+        background.fill((128,128,128))
 
         def in_bounds(x,y):
             return (x > planet.row_offsets[y] and
                     x < planet.row_offsets[y] + planet.row_lengths[y])
 
-        screen.lock()
+        background.lock()
         for y in range(0, screen.get_height()):
             for x in range(0, screen.get_width()):
                 if in_bounds(x,y):
                     value = planet.rows[y][x - planet.row_offsets[y]]
-                    screen.set_at((x,y),(value,value,value))
-        screen.unlock()
+                    background.set_at((x,y),(value,value,value))
+        background.unlock()
+
+        screen.blit(background, (0,0))
 
         points = pygame.sprite.Group()
 
@@ -67,6 +70,7 @@ class Display:
                     point.rect.left = ncolumn + planet.row_offsets[nrow] - point.image.get_width()/2
                     point.rect.top = nrow - point.image.get_height()/2
 
+            points.clear(screen, background)
             points.draw(screen)
             
             pygame.display.flip()
