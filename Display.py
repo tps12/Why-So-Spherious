@@ -10,9 +10,22 @@ class Display:
     def main_loop(self):
 
         planet = Planet(200,1,(0,True))
-        row = random.randint(1, planet.row_count-2)
-        planet.rows[row][random.randint(0,
-                                        planet.row_lengths[row]-1)] = (255,True)
+        row = planet.row_count/2
+        planet.rows[row][planet.row_lengths[row]/2] = (255,True)
+
+        def expand(row, column, limit):
+            if limit:
+                to_expand = []
+                for (nrow,ncolumn) in planet.adjacent(row, column):
+                    (value,dirty) = planet.rows[nrow][ncolumn]
+                    if not value:
+                        if random.randint(0,100) < 90:
+                            planet.rows[nrow][ncolumn] = (255,True)
+                            to_expand.append((nrow,ncolumn))
+                for (nrow,ncolumn) in to_expand:
+                    expand(nrow,ncolumn,limit-1)
+
+        expand(row, planet.row_lengths[row]/2, 200)
 
         pygame.init()    
 
@@ -37,17 +50,6 @@ class Display:
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         done = True
-
-            adjustments = []
-            for row in range(planet.row_count):
-                for column in range(planet.row_lengths[row]):
-                    (value,dirty) = planet.rows[row][column]
-                    if value > 10:
-                        for (r,c) in planet.adjacent(row,column):
-                            adjustments.append((r,c,value-10))
-
-            for (row,column,value) in adjustments:
-                planet.rows[row][column] = (value,True)
 
             screen.lock()
             for y in range(0, screen.get_height()):
