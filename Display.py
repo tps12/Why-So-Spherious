@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from pygame.locals import *
 
@@ -8,6 +10,8 @@ class Display:
     def main_loop(self):
 
         planet = Planet(200,1)
+        row = random.randint(1, planet.row_count-2)
+        planet.rows[row][random.randint(0, planet.row_lengths[row]-1)] = 255
 
         pygame.init()    
 
@@ -37,7 +41,7 @@ class Display:
                     if (x > planet.row_offsets[y] and
                         x < planet.row_offsets[y] + planet.row_lengths[y]):
                         value = planet.rows[y][x - planet.row_offsets[y]]
-                        screen.set_at((x,y),(value,0,0))
+                        screen.set_at((x,y),(value,value,value))
             screen.unlock()
             
             pygame.display.flip()
