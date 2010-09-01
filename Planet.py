@@ -14,11 +14,21 @@ class Planet:
         
 
     def adjacent(self, row, column):
+        # wrap left
         if column > 0:
             yield (row, column-1)
         elif self.row_lengths[row] > 1:
             yield (row, self.row_lengths[row]-1)
+
+        # wrap right
         if column < self.row_lengths[row]-1:
             yield (row, column+1)
         elif self.row_lengths[row] > 1:
             yield (row, 0)
+
+        if row > 0:
+            if self.row_lengths[row] == self.row_lengths[row-1]:
+                yield (row-1,column)
+        if row < self.row_count-1:
+            if self.row_lengths[row] == self.row_lengths[row+1]:
+                yield (row+1,column)
