@@ -56,6 +56,16 @@ class Display:
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         done = True
+                        
+            for point in points:
+                row = point.rect.top + point.image.get_height()/2
+                column = point.rect.left - planet.row_offsets[row] + point.image.get_width()/2
+                adjacent = [a for a in planet.adjacent(row, column)]
+                i = random.randint(0, len(adjacent))-1
+                if i >= 0:
+                    nrow, ncolumn = adjacent[i]
+                    point.rect.left = ncolumn + planet.row_offsets[nrow] - point.image.get_width()/2
+                    point.rect.top = nrow - point.image.get_height()/2
 
             points.draw(screen)
             
