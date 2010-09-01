@@ -9,7 +9,8 @@ class Display:
 
     def main_loop(self):
 
-        planet = Planet(200,1,(0,False))
+        planet = Planet(100,1,(0,False))
+        print planet.max_row,planet.row_count
         row = planet.row_count/2
         planet.rows[row][planet.row_lengths[row]/2] = (128,True)
 
@@ -31,7 +32,7 @@ class Display:
                     count = expand(count, nrow, ncolumn, limit-1)
             return count
 
-        count = expand(1, row, planet.row_lengths[row]/2, 400)
+        count = expand(1, row, planet.row_lengths[row]/2, 628)
 
         print count, sum(planet.row_lengths), 100.*count/sum(planet.row_lengths),'%'
 
