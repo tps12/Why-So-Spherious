@@ -26,6 +26,10 @@ class Display:
 
         done = False
 
+        def in_bounds(x,y):
+            return (x > planet.row_offsets[y] and
+                    x < planet.row_offsets[y] + planet.row_lengths[y])
+
         while not done:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -34,13 +38,25 @@ class Display:
                     if event.key == K_ESCAPE:
                         done = True
 
+            adjustments = []
+            for row in range(planet.row_count):
+                for column in range(planet.row_lengths[row]):
+                    value = planet.rows[row][column]
+                    if value > 10:
+                        if column > 1:
+                            adjustments.append((row,column-1,value-10))
+                        if column < planet.row_lengths[row] - 1:
+                            adjustments.append((row,column+1,value-10))
+
+            for (row,column,value) in adjustments:
+                planet.rows[row][column] = value
+
             screen.blit(background, (0,0))
             screen.lock()
             for y in range(0, screen.get_height()):
                 for x in range(0, screen.get_width()):
-                    if (x > planet.row_offsets[y] and
-                        x < planet.row_offsets[y] + planet.row_lengths[y]):
-                        value = planet.rows[y][x - planet.row_offsets[y]]
+                    if in_bounds(x,y):
+                        value = planet.rows[y][x - planet.row_offsets[y]]                                
                         screen.set_at((x,y),(value,value,value))
             screen.unlock()
             
