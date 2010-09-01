@@ -12,3 +12,13 @@ class Planet:
         self.row_offsets = [int((self.max_row - row_length)/2.0 + 0.5)
                             for row_length in self.row_lengths]
         
+
+    def adjacent(self, row, column):
+        if column > 0:
+            yield (row, column-1)
+        elif self.row_lengths[row] > 1:
+            yield (row, self.row_lengths[row]-1)
+        if column < self.row_lengths[row]-1:
+            yield (row, column+1)
+        elif self.row_lengths[row] > 1:
+            yield (row, 0)

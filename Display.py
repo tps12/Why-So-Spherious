@@ -43,10 +43,8 @@ class Display:
                 for column in range(planet.row_lengths[row]):
                     (value,dirty) = planet.rows[row][column]
                     if value > 10:
-                        if column > 1:
-                            adjustments.append((row,column-1,value-10))
-                        if column < planet.row_lengths[row] - 1:
-                            adjustments.append((row,column+1,value-10))
+                        for (r,c) in planet.adjacent(row,column):
+                            adjustments.append((r,c,value-10))
 
             for (row,column,value) in adjustments:
                 planet.rows[row][column] = (value,True)
