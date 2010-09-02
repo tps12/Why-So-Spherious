@@ -46,6 +46,7 @@ class Display:
             point.raw_coords = planet.get_coordinates(row, column,
                                                       point.image.get_size())
             point.rect = pygame.Rect(point.raw_coords, point.image.get_size())
+            point.v = (0.4,3*math.pi/8)
             points.add(point)
 
         limit = pygame.time.Clock()
@@ -61,7 +62,13 @@ class Display:
                         done = True
                         
             for point in points:
-                pass
+                x, y = point.raw_coords
+                speed, theta = point.v
+                theta, x, y = planet.apply_heading(speed, theta, x, y,
+                                                   point.image.get_size())
+                point.v = speed, theta
+                point.raw_coords = x,y
+                point.rect.topleft = point.raw_coords
 
             points.clear(screen, background)
             points.draw(screen)
