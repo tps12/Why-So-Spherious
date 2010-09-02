@@ -78,7 +78,7 @@ class Planet:
         
         # horizontal component
         vx = v * cos(theta)
-        ncolumn = column + vx
+        ncolumn = (column + vx) * m
         if ncolumn < 0:
             ncolumn += self.row_lengths[int(nrow)]
         elif ncolumn > self.row_lengths[int(nrow)] - 1:
