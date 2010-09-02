@@ -43,9 +43,8 @@ class Display:
             row = random.randint(1, planet.row_count-1)
             column = random.randint(0, planet.row_lengths[row]-1)
             point.rect = pygame.Rect(
-                (column + planet.row_offsets[row] - point.image.get_width()/2,
-                 row - point.image.get_height()/2),
-                point.image.get_size())   
+                planet.get_coordinates(row, column, point.image.get_size()),
+                point.image.get_size())
             points.add(point)
 
         limit = pygame.time.Clock()

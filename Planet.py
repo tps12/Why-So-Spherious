@@ -33,12 +33,24 @@ class Planet:
                 start = int(column * m)
                 end = int((column + 1) * m) + 1
                 if start < 0:
+                    # do wrapped portion on right and limit start
                     for c in range (start, 0):
                         yield (nrow, self.row_lengths[nrow] + c)
                     start = 0
                 if end > self.row_lengths[nrow]:
+                    # do wrapped portion on left and limit end
                     for c in range(self.row_lengths[nrow], end):
                         yield (nrow, c - self.row_lengths[nrow])
                     end = self.row_lengths[nrow]
                 for c in range(start, end):
                     yield (nrow, c)
+
+    def get_coordinates(self, row, column, size=None):
+        size = size or (0,0)
+        return (column + self.row_offsets[row] - size[0]/2,
+                row - size[1]/2)
+
+    def get_row_column(self, x, y):
+        print x,y
+        row = int(y)
+        return row, int(x - self.row_offsets[row])
