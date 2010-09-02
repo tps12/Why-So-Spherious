@@ -63,8 +63,10 @@ class Display:
                         
             for point in points:
                 x, y = point.raw_coords
-                point.raw_coords = planet.apply_heading(1, point.theta, x, y,
-                                                        point.image.get_size())
+                theta, x, y = planet.apply_heading(1, point.theta, x, y,
+                                                   point.image.get_size())
+                point.theta = theta
+                point.raw_coords = x,y
                 point.rect.topleft = point.raw_coords
 
             points.clear(screen, background)

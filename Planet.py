@@ -83,5 +83,6 @@ class Planet:
             ncolumn += self.row_lengths[int(nrow)]
         elif ncolumn > self.row_lengths[int(nrow)] - 1:
             ncolumn -= self.row_lengths[int(nrow)]
-        return self.get_coordinates(nrow, ncolumn, size)
+        x, y = self.get_coordinates(nrow, ncolumn, size)
+        return theta, x, y
 
