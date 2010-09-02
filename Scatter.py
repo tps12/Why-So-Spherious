@@ -46,8 +46,18 @@ class Display:
             point.raw_coords = planet.get_coordinates(row, column,
                                                       point.image.get_size())
             point.rect = pygame.Rect(point.raw_coords, point.image.get_size())
-            point.v = (0.4,3*math.pi/8)
+            point.v = (0,0)
             points.add(point)
+
+        def spread_influence(distance, row, column, limit):
+            to_expand = []
+            if limit:
+                for (nrow,ncolumn) in planet.adjacent(row, column):
+                    if not (int(nrow),int(ncolumn)) in distance:
+                        distance[(int(nrow),int(ncolumn))] = limit
+                        to_expand.append((int(nrow),int(ncolumn)))
+                random.shuffle(to_expand)
+            return (to_expand, limit-1)
 
         limit = pygame.time.Clock()
 
@@ -60,7 +70,25 @@ class Display:
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         done = True
-                        
+
+            # every point contributes to potential
+            for point in points:
+                x, y = point.raw_coords
+                row, column = planet.get_row_column(x, y, point.image.get_size())
+                expansion_sets = [([(row,column),], 5)]
+                distance = dict()
+                while len(expansion_sets) > 0:
+                    next_sets = []
+                    for (locations,radius) in expansion_sets:
+                        for row, column in locations:
+                            next_set = spread_influence(distance, row, column, radius)
+                            if len(next_set[0]):
+                                next_sets.append(next_set)
+                    expansion_sets = next_sets
+                for (row,column),d in distance.iteritems():
+                    planet.rows[row][column] += 1 - 1/math.pow(d,2)
+            
+            # apply velocities            
             for point in points:
                 x, y = point.raw_coords
                 speed, theta = point.v

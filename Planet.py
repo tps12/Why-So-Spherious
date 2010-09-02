@@ -28,7 +28,7 @@ class Planet:
                 for c in range (start, 0):
                     yield (nrow, self.row_lengths[int(nrow)] + c)
                 start = 0
-            if end > self.row_lengths[nrow]:
+            if end > self.row_lengths[int(nrow)]:
                 # do wrapped portion on left and limit end
                 for c in range(self.row_lengths[int(nrow)], end):
                     yield (nrow, c - self.row_lengths[int(nrow)])
