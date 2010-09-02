@@ -66,8 +66,8 @@ class Display:
                 i = random.randint(0, len(adjacent))-1
                 if i >= 0:
                     nrow, ncolumn = adjacent[i]
-                    point.rect.left = float(ncolumn + planet.row_offsets[nrow] - point.image.get_width()/2)
-                    point.rect.top = float(nrow - point.image.get_height()/2)
+                    point.rect.topleft = planet.get_coordinates(nrow, ncolumn,
+                                                                point.image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
