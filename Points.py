@@ -45,6 +45,7 @@ class Display:
             column = random.randint(0, planet.row_lengths[row]-1)
             point.raw_coords = planet.get_coordinates(row, column,
                                                       point.image.get_size())
+            point.theta = random.uniform(0, 2 * math.pi)
             point.rect = pygame.Rect(point.raw_coords, point.image.get_size())
             points.add(point)
 
@@ -61,9 +62,8 @@ class Display:
                         done = True
                         
             for point in points:
-                theta = random.uniform(0, 2 * math.pi)
                 x, y = point.raw_coords
-                point.raw_coords = planet.apply_heading(1, theta, x, y,
+                point.raw_coords = planet.apply_heading(1, point.theta, x, y,
                                                         point.image.get_size())
                 point.rect.topleft = point.raw_coords
 
