@@ -72,8 +72,10 @@ class Planet:
         nrow = row + vy
         if nrow < 0:
             nrow = -nrow
+            theta = (theta + pi) % (2 * pi)
         elif nrow >= self.row_count:
             nrow = self.row_count - (nrow - self.row_count)
+            theta = (theta + pi) % (2 * pi)
         m = self.get_slope(row, nrow)
         
         # horizontal component
