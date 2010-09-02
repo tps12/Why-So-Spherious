@@ -32,7 +32,7 @@ class Display:
                     count = expand(count, nrow, ncolumn, limit-1)
             return count
 
-        count = expand(1, row, planet.row_lengths[row]/2, 628)
+        count = expand(1, row, planet.row_lengths[row]/2, 600)
 
         print count, sum(planet.row_lengths), 100.*count/sum(planet.row_lengths),'%'
 

@@ -66,25 +66,31 @@ class Planet:
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
+        ntheta = theta
 
         # vertical component
         vy = v * sin(theta)
         nrow = row + vy
         if nrow < 0:
             nrow = -nrow
-            theta = (theta + pi) % (2 * pi)
+            ntheta = (theta + pi) % (2 * pi)
         elif nrow >= self.row_count:
             nrow = self.row_count - (nrow - self.row_count)
-            theta = (theta + pi) % (2 * pi)
+            ntheta = (theta + pi) % (2 * pi)
         m = self.get_slope(row, nrow)
         
         # horizontal component
         vx = v * cos(theta)
         ncolumn = (column + vx) * m
+        if theta != ntheta:
+            if ncolumn > self.row_lengths[int(nrow)]/2:
+                ncolumn -= self.row_lengths[int(nrow)]/2
+            else:
+                ncolumn += self.row_lengths[int(nrow)]/2
         if ncolumn < 0:
             ncolumn += self.row_lengths[int(nrow)]
         elif ncolumn > self.row_lengths[int(nrow)] - 1:
             ncolumn -= self.row_lengths[int(nrow)]
         x, y = self.get_coordinates(nrow, ncolumn, size)
-        return theta, x, y
+        return ntheta, x, y
 
