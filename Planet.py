@@ -47,10 +47,11 @@ class Planet:
 
     def get_coordinates(self, row, column, size=None):
         size = size or (0,0)
-        return (column + self.row_offsets[row] - size[0]/2,
+        return (column + self.row_offsets[int(row)] - size[0]/2,
                 row - size[1]/2)
 
     def get_row_column(self, x, y, size=None):
         size = size or (0,0)
-        row = int(y + size[1]/2)
-        return row, int(x - self.row_offsets[row] + size[0]/2)
+        row = y + size[1]/2
+        return row, x - self.row_offsets[row] + size[0]/2
+
