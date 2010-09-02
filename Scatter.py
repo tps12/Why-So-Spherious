@@ -72,6 +72,7 @@ class Display:
                         done = True
 
             # every point contributes to potential
+            potential_points = set()
             for point in points:
                 x, y = point.raw_coords
                 row, column = planet.get_row_column(x, y, point.image.get_size())
@@ -87,16 +88,12 @@ class Display:
                     expansion_sets = next_sets
                 for (row,column),d in distance.iteritems():
                     planet.rows[row][column] += 1 - 1/math.pow(d,2)
-            
-            # apply velocities            
-            for point in points:
-                x, y = point.raw_coords
-                speed, theta = point.v
-                theta, x, y = planet.apply_heading(speed, theta, x, y,
-                                                   point.image.get_size())
-                point.v = speed, theta
+                    potential_points.add((row,column))
                 point.raw_coords = x,y
                 point.rect.topleft = point.raw_coords
+
+            for row,column in potential_points:
+                planet.rows[row][column] = 0
 
             points.clear(screen, background)
             points.draw(screen)
