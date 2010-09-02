@@ -69,3 +69,4 @@ class Planet:
         elif column > self.row_lengths[int(row)] - 1:
             column -= self.row_lengths[int(row)]
         return self.get_coordinates(row, column, size)
+

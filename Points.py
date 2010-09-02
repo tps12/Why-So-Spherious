@@ -43,9 +43,9 @@ class Display:
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
             row = random.randint(1, planet.row_count-1)
             column = random.randint(0, planet.row_lengths[row]-1)
-            point.rect = pygame.Rect(
-                planet.get_coordinates(row, column, point.image.get_size()),
-                point.image.get_size())
+            point.raw_coords = planet.get_coordinates(row, column,
+                                                      point.image.get_size())
+            point.rect = pygame.Rect(point.raw_coords, point.image.get_size())
             points.add(point)
 
         limit = pygame.time.Clock()
@@ -62,10 +62,10 @@ class Display:
                         
             for point in points:
                 theta = random.uniform(0, 2 * math.pi)
-                point.rect.topleft = planet.apply_heading(1, theta,
-                                                          point.rect.left,
-                                                          point.rect.top,
-                                                          point.image.get_size())
+                x, y = point.raw_coords
+                point.raw_coords = planet.apply_heading(1, theta, x, y,
+                                                        point.image.get_size())
+                point.rect.topleft = point.raw_coords
 
             points.clear(screen, background)
             points.draw(screen)
