@@ -4,9 +4,12 @@ class Planet:
     def __init__(self, radius, tile_size, value):
         dtheta = float(tile_size) / radius
         self.row_count = int(pi / dtheta)
-        self.row_lengths = [int(2 * self.row_count * sin(row * dtheta) + 0.5)
-                            for row in range(0,self.row_count)]
-        self.rows = [[value for i in range(0, row_length)]
+        self.row_lengths = [l for l in
+                            [int(2 * self.row_count * sin(row * dtheta) + 0.5)
+                             for row in range(0,int(pi/dtheta))]
+                            if l > 0]
+        self.row_count = len(self.row_lengths)
+        self.rows = [[value  for i in range(0, row_length)]
                      for row_length in self.row_lengths]
         self.max_row = max(self.row_lengths)
         self.row_offsets = [int((self.max_row - row_length)/2.0 + 0.5)
@@ -75,10 +78,10 @@ class Planet:
         
         # horizontal component
         vx = v * cos(theta)
-        column += vx
-        if column < 0:
-            column += self.row_lengths[int(nrow)]
-        elif column > self.row_lengths[int(nrow)] - 1:
-            column -= self.row_lengths[int(nrow)]
-        return self.get_coordinates(nrow, column, size)
+        ncolumn = column + vx
+        if ncolumn < 0:
+            ncolumn += self.row_lengths[int(nrow)]
+        elif ncolumn > self.row_lengths[int(nrow)] - 1:
+            ncolumn -= self.row_lengths[int(nrow)]
+        return self.get_coordinates(nrow, ncolumn, size)
 
