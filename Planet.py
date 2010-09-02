@@ -50,7 +50,7 @@ class Planet:
         return (column + self.row_offsets[row] - size[0]/2,
                 row - size[1]/2)
 
-    def get_row_column(self, x, y):
-        print x,y
-        row = int(y)
-        return row, int(x - self.row_offsets[row])
+    def get_row_column(self, x, y, size=None):
+        size = size or (0,0)
+        row = int(y + size[1]/2)
+        return row, int(x - self.row_offsets[row] + size[0]/2)

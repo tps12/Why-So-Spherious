@@ -60,14 +60,14 @@ class Display:
                         done = True
                         
             for point in points:
-                row = int(point.rect.top + point.image.get_height()/2)
-                column = int(point.rect.left - planet.row_offsets[row] + point.image.get_width()/2)
+                row, column = planet.get_row_column(
+                    point.rect.left, point.rect.top, point.image.get_size())
                 adjacent = [a for a in planet.adjacent(row, column)]
                 i = random.randint(0, len(adjacent))-1
                 if i >= 0:
                     nrow, ncolumn = adjacent[i]
-                    point.rect.topleft = planet.get_coordinates(nrow, ncolumn,
-                                                                point.image.get_size())
+                    point.rect.topleft = planet.get_coordinates(
+                        nrow, ncolumn, point.image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
