@@ -11,39 +11,42 @@ class Planet:
         self.max_row = max(self.row_lengths)
         self.row_offsets = [int((self.max_row - row_length)/2.0 + 0.5)
                             for row_length in self.row_lengths]
-        
 
+    def get_adjacent_row(self, row, column, nrow):
+        if nrow >= 0 and nrow < self.row_count - 1 and self.row_lengths[int(nrow)]:
+            m = float(self.row_lengths[int(nrow)])/self.row_lengths[int(row)]
+            start = int(column * m)
+            end = int((column + 1) * m) + 1
+            if start < 0:
+                # do wrapped portion on right and limit start
+                for c in range (start, 0):
+                    yield (nrow, self.row_lengths[int(nrow)] + c)
+                start = 0
+            if end > self.row_lengths[nrow]:
+                # do wrapped portion on left and limit end
+                for c in range(self.row_lengths[int(nrow)], end):
+                    yield (nrow, c - self.row_lengths[int(nrow)])
+                end = self.row_lengths[int(nrow)]
+            for c in range(start, end):
+                yield (nrow, c)
+    
     def adjacent(self, row, column):
         # wrap left
         if column > 0:
             yield (row, column-1)
         elif self.row_lengths[row] > 1:
-            yield (row, self.row_lengths[row]-1)
+            yield (row, self.row_lengths[int(row)]-1)
 
         # wrap right
-        if column < self.row_lengths[row]-1:
+        if column < self.row_lengths[int(row)]-1:
             yield (row, column+1)
-        elif self.row_lengths[row] > 1:
+        elif self.row_lengths[int(row)] > 1:
             yield (row, 0)
 
         # adjacent rows
         for nrow in (row-1,row+1):
-            if nrow >= 0 and nrow < self.row_count -1 and self.row_lengths[nrow]:
-                m = float(self.row_lengths[nrow])/self.row_lengths[row]
-                start = int(column * m)
-                end = int((column + 1) * m) + 1
-                if start < 0:
-                    # do wrapped portion on right and limit start
-                    for c in range (start, 0):
-                        yield (nrow, self.row_lengths[nrow] + c)
-                    start = 0
-                if end > self.row_lengths[nrow]:
-                    # do wrapped portion on left and limit end
-                    for c in range(self.row_lengths[nrow], end):
-                        yield (nrow, c - self.row_lengths[nrow])
-                    end = self.row_lengths[nrow]
-                for c in range(start, end):
-                    yield (nrow, c)
+            for adj in self.get_adjacent_row(row, column, nrow):
+                yield adj
 
     def get_coordinates(self, row, column, size=None):
         size = size or (0,0)
@@ -55,3 +58,14 @@ class Planet:
         row = y + size[1]/2
         return row, x - self.row_offsets[row] + size[0]/2
 
+    def apply_heading(self, v, theta, x, y, size=None):
+        row, column = self.get_row_column(x, y, size)
+        
+        # horizontal component
+        vx = v * cos(theta)
+        column += vx
+        if column < 0:
+            column += self.row_lengths[int(row)]
+        elif column > self.row_lengths[int(row)] - 1:
+            column -= self.row_lengths[int(row)]
+        return self.get_coordinates(row, column, size)

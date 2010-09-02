@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -60,14 +61,11 @@ class Display:
                         done = True
                         
             for point in points:
-                row, column = planet.get_row_column(
-                    point.rect.left, point.rect.top, point.image.get_size())
-                adjacent = [a for a in planet.adjacent(row, column)]
-                i = random.randint(0, len(adjacent))-1
-                if i >= 0:
-                    nrow, ncolumn = adjacent[i]
-                    point.rect.topleft = planet.get_coordinates(
-                        nrow, ncolumn, point.image.get_size())
+                theta = random.uniform(0, 2 * math.pi)
+                point.rect.topleft = planet.apply_heading(1, theta,
+                                                          point.rect.left,
+                                                          point.rect.top,
+                                                          point.image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
