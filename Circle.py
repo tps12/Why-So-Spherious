@@ -37,7 +37,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(1):
+        for n in range(5):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -63,10 +63,8 @@ class Display:
                         
             for point in points:
                 x, y = point.raw_coords
-                x2, y2 = planet.apply_bearing(0.1, point.theta, x, y,
-                                              point.image.get_size())
-                theta, x, y = planet.apply_heading(0.25, point.theta, x, y,
-                                                   point.image.get_size())
+                theta, x2, y2 = planet.apply_bearing(0.1, point.theta, x, y,
+                                                     point.image.get_size())
                 point.theta = theta
                 point.raw_coords = x2,y2
                 point.rect.topleft = point.raw_coords

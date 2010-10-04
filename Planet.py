@@ -75,6 +75,10 @@ class Planet:
         return (-(row - self.row_count/2) * self.dtheta,
                 2 * pi * column/self.row_lengths[int(row)] - pi)
 
+    def bearing(self, lat1, lon1, lat2, lon2):
+        return atan2(sin(lon2-lon1) * cos(lat2),
+                     cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(lon2-lon1))
+
     def apply_bearing(self, d, theta, x, y, size=None):
         lat, lon = self.get_lat_lon(x, y, size)
 
@@ -83,7 +87,13 @@ class Planet:
                     cos(lat)*sin(da)*cos(theta))
         lon2 = lon + atan2(sin(theta)*sin(da)*cos(lat),
                            cos(da) - sin(lat)*sin(lat2))
-        return self.get_coordinates_from_lat_lon(lat2, lon2, size)
+        if lon2 > pi:
+            lon2 -= 2*pi
+        if lon2 < -pi:
+            lon2 += 2*pi
+
+        return (((self.bearing(lat2,lon2,lat,lon) + pi) % (2*pi),) +
+                self.get_coordinates_from_lat_lon(lat2, lon2, size))
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
