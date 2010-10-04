@@ -2,11 +2,12 @@ from math import *
 
 class Planet:
     def __init__(self, radius, tile_size, value):
-        dtheta = float(tile_size) / radius
-        self.row_count = int(pi / dtheta)
+        self.radius = float(radius)
+        self.dtheta = tile_size / self.radius
+        self.row_count = int(pi / self.dtheta)
         self.row_lengths = [l for l in
-                            [int(2 * self.row_count * sin(row * dtheta) + 0.5)
-                             for row in range(0,int(pi/dtheta))]
+                            [int(2 * self.row_count * sin(row * self.dtheta) + 0.5)
+                             for row in range(0,int(pi/self.dtheta))]
                             if l > 0]
         self.row_count = len(self.row_lengths)
         self.rows = [[value  for i in range(0, row_length)]
@@ -59,10 +60,30 @@ class Planet:
         return (column + self.row_offsets[int(row)] - size[0]/2,
                 row - size[1]/2)
 
+    def get_coordinates_from_lat_lon(self, lat, lon, size=None):
+        row = lat/-self.dtheta + self.row_count/2
+        column = (lon + pi) / (2 * pi) * self.row_lengths[int(row)]
+        return self.get_coordinates(row, column, size)
+
     def get_row_column(self, x, y, size=None):
         size = size or (0,0)
         row = y + size[1]/2
         return row, x - self.row_offsets[int(row)] + size[0]/2
+
+    def get_lat_lon(self, x, y, size=None):
+        row, column = self.get_row_column(x, y, size)
+        return (-(row - self.row_count/2) * self.dtheta,
+                2 * pi * column/self.row_lengths[int(row)] - pi)
+
+    def apply_bearing(self, d, theta, x, y, size=None):
+        lat, lon = self.get_lat_lon(x, y, size)
+
+        da = d/self.radius
+        lat2 = asin(sin(lat)*cos(da) +
+                    cos(lat)*sin(da)*cos(theta))
+        lon2 = lon + atan2(sin(theta)*sin(da)*cos(lat),
+                           cos(da) - sin(lat)*sin(lat2))
+        return self.get_coordinates_from_lat_lon(lat2, lon2, size)
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
