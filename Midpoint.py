@@ -37,7 +37,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(2):
+        for n in range(6):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
