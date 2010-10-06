@@ -1,3 +1,8 @@
+# Calculations involving great circles based on example code by Chris Veness:
+# http://www.movable-type.co.uk/scripts/latlong.html
+# Used under a Creative Commons license:
+# http://creativecommons.org/licenses/by/3.0/
+
 from math import *
 
 class Planet:
