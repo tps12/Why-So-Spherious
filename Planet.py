@@ -75,6 +75,12 @@ class Planet:
         return (-(row - self.row_count/2) * self.dtheta,
                 2 * pi * column/self.row_lengths[int(row)] - pi)
 
+    def midpoint(self, x1, y1, size1, x2, y2, size2, size=None):
+        lat1, lon1 = self.get_lat_lon(x1, y1, size1)
+        lat2, lon2 = self.get_lat_lon(x2, y2, size2)
+        return self.get_coordinates_from_lat_lon(
+            (lat1 + lat2)/2, (lon1 + lon2)/2, size)
+
     def bearing(self, lat1, lon1, lat2, lon2):
         return atan2(sin(lon2-lon1) * cos(lat2),
                      cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(lon2-lon1))

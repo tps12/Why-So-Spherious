@@ -78,6 +78,14 @@ class Display:
                 point.raw_coords = x2,y2
                 point.rect.topleft = point.raw_coords
 
+            for i in range(len(midpoints.sprites())):
+                x1,y1 = points.sprites()[2*i].raw_coords
+                x2,y2 = points.sprites()[2*i+1].raw_coords
+                midpoints.sprites()[i].rect.topleft = planet.midpoint(
+                    x1,y1,points.sprites()[2*i].image.get_size(),
+                    x2,y2,points.sprites()[2*i+1].image.get_size(),
+                    midpoints.sprites()[i].image.get_size())
+                
             points.clear(screen, background)
             points.draw(screen)
 
