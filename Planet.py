@@ -3,6 +3,10 @@
 # Used under a Creative Commons license:
 # http://creativecommons.org/licenses/by/3.0/
 
+# Weighted average of points on a sphere uses algorithm by
+# Samuel Buss and Jay Fillmore
+# http://www.math.ucsd.edu/~sbuss/ResearchWeb/spheremean/paper.pdf
+
 from math import *
 
 class Planet:

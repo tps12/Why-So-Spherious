@@ -37,7 +37,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(2):
+        for n in range(6):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -76,14 +76,11 @@ class Display:
                 point.raw_coords = x2,y2
                 point.rect.topleft = point.raw_coords
 
-            for i in range(len(midpoints.sprites())):
-                x1,y1 = points.sprites()[2*i].raw_coords
-                x2,y2 = points.sprites()[2*i+1].raw_coords
-                midpoints.sprites()[i].rect.topleft = planet.weighted_average(
-                    [(x1,y1),(x2,y2)], [1,1],
-                    [points.sprites()[2*i].image.get_size(),
-                     points.sprites()[2*i+1].image.get_size()],
-                    midpoints.sprites()[i].image.get_size())
+            midpoints.sprites()[0].rect.topleft = planet.weighted_average(
+                [s.raw_coords for s in points.sprites()],
+                [1 for s in points.sprites()],
+                [s.image.get_size() for s in points.sprites()],
+                midpoints.sprites()[0].image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
