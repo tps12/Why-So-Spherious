@@ -83,8 +83,15 @@ class Display:
                                              midpoint.image.get_size(),
                                              x, y, point.image.get_size())
                 if point.speed == 0:
-                    point.speed = 0.1
+                    point.speed = 0.001
                     point.theta = mp_theta
+                else:
+                    xs = (point.speed * math.cos(point.theta) +
+                          0.001 * math.cos(mp_theta))
+                    ys = (point.speed * math.sin(point.theta) +
+                          0.001 * math.sin(mp_theta))
+                    point.speed = min(0.1, math.sqrt(xs*xs + ys*ys))
+                    point.theta = math.atan2(ys, xs)
                 
                 theta, x2, y2 = planet.apply_bearing(point.speed, point.theta,
                                                      x, y,
