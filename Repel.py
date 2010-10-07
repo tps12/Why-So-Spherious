@@ -78,10 +78,13 @@ class Display:
             for point in points:
                 x, y = point.raw_coords
 
-                mp_theta = planet.xy_bearing(x, y, point.image.get_size(),
-                                             midpoint.rect.left,
+                mp_theta = planet.xy_bearing(midpoint.rect.left,
                                              midpoint.rect.top,
-                                             midpoint.image.get_size())
+                                             midpoint.image.get_size(),
+                                             x, y, point.image.get_size())
+                if point.speed == 0:
+                    point.speed = 0.1
+                    point.theta = mp_theta
                 
                 theta, x2, y2 = planet.apply_bearing(point.speed, point.theta,
                                                      x, y,
