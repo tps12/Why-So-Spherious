@@ -96,6 +96,48 @@ class Planet:
         
         return self.get_coordinates_from_lat_lon(latm, lonm, size)
 
+    def xy_to_vector(self, x, y, size=None):
+        lat, lon = self.get_lat_lon(x, y, size)
+        cos_lat = cos(lat)
+        return (cos_lat * cos(lon),
+                cos_lat * sin(lon),
+                sin(lat))
+
+    def vector_to_xy(self, v, size=None):
+        lat = atan2(v[2], sqrt(v[0]*v[0] + v[1]*v[1]))
+        lon = atan2(v[1], v[0])
+        return self.get_coordinates_from_lat_lon(lat, lon, size)
+
+    def magnitude(self, p):
+        return sqrt(sum([x*x for x in p]))
+
+    def weighted_average(self, xy_points, weights, sizes, size=None):
+        ps = [self.xy_to_vector(xy_points[i][0], xy_points[i][1], sizes[i])
+              for i in range(len(xy_points))]
+        add_vectors = lambda p1, p2: tuple([p1[i]+p2[i] for i in range(len(p1))])
+        vector_diff = lambda p1, p2: tuple([p1[i]-p2[i] for i in range(len(p1))])
+        weighted_sum = reduce(
+            add_vectors,
+            [tuple([weights[i] * c for c in ps[i]]) for i in range(len(ps))])
+        q = tuple([x / self.magnitude(weighted_sum) for x in weighted_sum])
+        last_u = None
+        while True:
+            p_stars = []
+            for p in ps:
+                cos_th = sum([p[i] * q[i] for i in range(len(p))])
+                th = acos(cos_th)
+                p_stars.append(tuple([c * th / sin(th) for c in p]))
+            u = reduce(
+                add_vectors,
+                [tuple([weights[i] * c
+                        for c in vector_diff(p_stars[i], q)])
+                 for i in range(len(p_stars))])
+            mag_u = self.magnitude(u)
+            if mag_u == last_u:
+                return self.vector_to_xy(q, size)
+            else:
+                last_u = mag_u
+
     def bearing(self, lat1, lon1, lat2, lon2):
         return atan2(sin(lon2-lon1) * cos(lat2),
                      cos(lat1)*sin(lat2) - sin(lat1)*cos(lat2)*cos(lon2-lon1))
