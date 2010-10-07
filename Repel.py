@@ -37,7 +37,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(6):
+        for n in range(20):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -90,7 +90,7 @@ class Display:
                           0.001 * math.cos(mp_theta))
                     ys = (point.speed * math.sin(point.theta) +
                           0.001 * math.sin(mp_theta))
-                    point.speed = min(0.1, math.sqrt(xs*xs + ys*ys))
+                    point.speed = min(1, math.sqrt(xs*xs + ys*ys))
                     point.theta = math.atan2(ys, xs)
                 
                 theta, x2, y2 = planet.apply_bearing(point.speed, point.theta,

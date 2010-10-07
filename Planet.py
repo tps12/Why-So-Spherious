@@ -90,6 +90,13 @@ class Planet:
 
         return self.bearing(lat1, lon1, lat2, lon2)
 
+    def distance(self, x1, y1, size1, x2, y2, size2):
+        lat1, lon1 = self.get_lat_lon(x1, y1, size1)
+        lat2, lon2 = self.get_lat_lon(x2, y2, size2)
+
+        return acos(sin(lat1)*sin(lat2) +
+                    cos(lat1)*cos(lat2)*cos(lon2-lon1))
+
     def midpoint(self, x1, y1, size1, x2, y2, size2, size=None):
         lat1, lon1 = self.get_lat_lon(x1, y1, size1)
         lat2, lon2 = self.get_lat_lon(x2, y2, size2)
