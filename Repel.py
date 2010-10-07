@@ -78,11 +78,11 @@ class Display:
                 point.raw_coords = x2,y2
                 point.rect.topleft = point.raw_coords
 
-            midpoints.sprites()[0].rect.topleft = planet.weighted_average(
+            midpoint.rect.topleft = planet.weighted_average(
                 [s.raw_coords for s in points.sprites()],
                 [1 for s in points.sprites()],
                 [s.image.get_size() for s in points.sprites()],
-                midpoints.sprites()[0].image.get_size())
+                midpoint.image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
