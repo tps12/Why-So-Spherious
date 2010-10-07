@@ -68,21 +68,27 @@ class Display:
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         done = True
-                        
-            for point in points:
-                x, y = point.raw_coords
-                theta, x2, y2 = planet.apply_bearing(point.speed, point.theta,
-                                                     x, y,
-                                                     point.image.get_size())
-                point.theta = theta
-                point.raw_coords = x2,y2
-                point.rect.topleft = point.raw_coords
 
             midpoint.rect.topleft = planet.weighted_average(
                 [s.raw_coords for s in points.sprites()],
                 [1 for s in points.sprites()],
                 [s.image.get_size() for s in points.sprites()],
                 midpoint.image.get_size())
+                        
+            for point in points:
+                x, y = point.raw_coords
+
+                mp_theta = planet.xy_bearing(x, y, point.image.get_size(),
+                                             midpoint.rect.left,
+                                             midpoint.rect.top,
+                                             midpoint.image.get_size())
+                
+                theta, x2, y2 = planet.apply_bearing(point.speed, point.theta,
+                                                     x, y,
+                                                     point.image.get_size())
+                point.theta = theta
+                point.raw_coords = x2,y2
+                point.rect.topleft = point.raw_coords
 
             points.clear(screen, background)
             points.draw(screen)
