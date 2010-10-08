@@ -95,7 +95,7 @@ class Display:
             redraw = False
             if heatpoint.rect.topleft == midpoint.rect.topleft:
                 if heatpoint.heat < 127:
-                    heatpoint.heat += 5
+                    heatpoint.heat = min(127, heatpoint.heat + 10)
                     redraw = True
             else:
                 if heatpoint.heat > 0:
@@ -124,7 +124,7 @@ class Display:
                                         heatpoint.image.get_size(),
                                         x, y, point.image.get_size())
 
-                    impulse = heatpoint.heat * math.cos(d/2) / 128
+                    impulse = heatpoint.heat * math.cos(d/2) / 128 / 10
                     if point.speed == 0:
                         point.speed = impulse
                         point.theta = hp_theta
