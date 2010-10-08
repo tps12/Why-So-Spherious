@@ -62,9 +62,12 @@ class Display:
         heatpoint.image = pygame.Surface((10,10))
         pygame.draw.circle(heatpoint.image, (128,128,128), (5,5), 5)
         heatpoint.rect = pygame.Rect((0,0), heatpoint.image.get_size())
-        heatpoint.raw_coords = None
+        heatpoint.inited = False
+        heatpoint.speed = 0.001
         heatpoint.heat = 0
         metapoints.add(heatpoint)
+
+        decay = 0.001
 
         limit = pygame.time.Clock()
 
@@ -85,10 +88,11 @@ class Display:
                 midpoint.image.get_size())
 
             # heat point starts out at initial midpoint
-            if heatpoint.raw_coords == None:
-                heatpoint.raw_coords = heatpoint.rect.topleft = midpoint.rect.topleft
+            if not heatpoint.inited:
+                heatpoint.rect.topleft = midpoint.rect.topleft
+                heatpoint.inited = True
 
-            if heatpoint.raw_coords == midpoint.rect.topleft:
+            if heatpoint.rect.topleft == midpoint.rect.topleft:
                 if heatpoint.heat < 127:
                     heatpoint.heat += 1
                     pygame.draw.circle(heatpoint.image, (128 + heatpoint.heat,
@@ -98,28 +102,54 @@ class Display:
                     heatpoint.heat -= 1
                     pygame.draw.circle(heatpoint.image, (128 + heatpoint.heat,
                                                          128,128), (5,5), 5)
+                mp_theta = planet.xy_bearing(midpoint.rect.left,
+                                             midpoint.rect.top,
+                                             midpoint.image.get_size(),
+                                             heatpoint.rect.left,
+                                             heatpoint.rect.top,
+                                             heatpoint.image.get_size())
+                d = planet.distance(midpoint.rect.left,
+                                    midpoint.rect.top,
+                                    midpoint.image.get_size(),
+                                    heatpoint.rect.left,
+                                    heatpoint.rect.top,
+                                    heatpoint.image.get_size())
+                if d < heatpoint.speed:
+                    heatpoint.rect.topleft = midpoint.rect.topleft
+                else:
+                    theta, x, y = planet.apply_bearing(heatpoint.speed, mp_theta,
+                                                       heatpoint.rect.left,
+                                                       heatpoint.rect.top,
+                                                       heatpoint.image.get_size())
+                    heatpoint.rect.topleft = x, y
                         
             for point in points:
                 x, y = point.raw_coords
 
-                hp_theta = planet.xy_bearing(heatpoint.rect.left,
-                                             heatpoint.rect.top,
-                                             heatpoint.image.get_size(),
-                                             x, y, point.image.get_size())
-                if point.speed == 0:
-                    point.speed = 0.001
-                    point.theta = hp_theta
-                else:
-                    d = planet.distance(midpoint.rect.left,
-                                        midpoint.rect.top,
-                                        midpoint.image.get_size(),
+                if heatpoint.heat:
+                    hp_theta = planet.xy_bearing(heatpoint.rect.left,
+                                                 heatpoint.rect.top,
+                                                 heatpoint.image.get_size(),
+                                                 x, y, point.image.get_size())
+                    d = planet.distance(heatpoint.rect.left,
+                                        heatpoint.rect.top,
+                                        heatpoint.image.get_size(),
                                         x, y, point.image.get_size())
-                    xs = (point.speed * math.cos(point.theta) +
-                          0.001 * math.cos(d/2) * math.cos(hp_theta))
-                    ys = (point.speed * math.sin(point.theta) +
-                          0.001 * math.cos(d/2) * math.sin(hp_theta))
-                    point.speed = min(1, math.sqrt(xs*xs + ys*ys))
-                    point.theta = math.atan2(ys, xs)
+
+                    impulse = heatpoint.heat * math.cos(d/2) / 128
+                    if point.speed == 0:
+                        point.speed = impulse
+                        point.theta = hp_theta
+                    else:
+                        xs = (point.speed * math.cos(point.theta) +
+                              impulse * math.cos(hp_theta))
+                        ys = (point.speed * math.sin(point.theta) +
+                              impulse * math.sin(hp_theta))
+                        point.speed = min(1, math.sqrt(xs*xs + ys*ys))
+                        point.theta = math.atan2(ys, xs)
+                else:
+                    if point.speed > 0:
+                        point.speed = max(0, point.speed - decay)
                 
                 theta, x2, y2 = planet.apply_bearing(point.speed, point.theta,
                                                      x, y,
