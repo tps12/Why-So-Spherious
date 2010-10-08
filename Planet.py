@@ -70,7 +70,7 @@ class Planet:
                 row - size[1]/2)
 
     def get_coordinates_from_lat_lon(self, lat, lon, size=None):
-        row = lat/-self.dtheta + self.row_count/2
+        row = min(lat/-self.dtheta + self.row_count/2, self.row_count-1)
         column = (lon + pi) / (2 * pi) * self.row_lengths[int(row)]
         return self.get_coordinates(row, column, size)
 

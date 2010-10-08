@@ -92,37 +92,25 @@ class Display:
                 heatpoint.rect.topleft = midpoint.rect.topleft
                 heatpoint.inited = True
 
+            redraw = False
             if heatpoint.rect.topleft == midpoint.rect.topleft:
                 if heatpoint.heat < 127:
-                    heatpoint.heat += 1
-                    pygame.draw.circle(heatpoint.image, (128 + heatpoint.heat,
-                                                         128,128), (5,5), 5)
+                    heatpoint.heat += 5
+                    redraw = True
             else:
                 if heatpoint.heat > 0:
                     heatpoint.heat -= 1
-                    pygame.draw.circle(heatpoint.image, (128 + heatpoint.heat,
-                                                         128,128), (5,5), 5)
-                mp_theta = planet.xy_bearing(midpoint.rect.left,
-                                             midpoint.rect.top,
-                                             midpoint.image.get_size(),
-                                             heatpoint.rect.left,
-                                             heatpoint.rect.top,
-                                             heatpoint.image.get_size())
-                d = planet.distance(midpoint.rect.left,
-                                    midpoint.rect.top,
-                                    midpoint.image.get_size(),
-                                    heatpoint.rect.left,
-                                    heatpoint.rect.top,
-                                    heatpoint.image.get_size())
-                if d < heatpoint.speed:
-                    heatpoint.rect.topleft = midpoint.rect.topleft
+                    redraw = True
                 else:
-                    theta, x, y = planet.apply_bearing(heatpoint.speed, mp_theta,
-                                                       heatpoint.rect.left,
-                                                       heatpoint.rect.top,
-                                                       heatpoint.image.get_size())
-                    heatpoint.rect.topleft = x, y
-                        
+                    heatpoint.rect.topleft = midpoint.rect.topleft
+
+            if redraw:
+                pygame.draw.circle(heatpoint.image, (128 + heatpoint.heat,
+                                                     127 - heatpoint.heat,
+                                                     127 - heatpoint.heat),
+                                   (5,5), 5)
+
+                
             for point in points:
                 x, y = point.raw_coords
 
