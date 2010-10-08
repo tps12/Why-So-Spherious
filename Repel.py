@@ -37,7 +37,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(20):
+        for n in range(10):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -86,10 +86,14 @@ class Display:
                     point.speed = 0.001
                     point.theta = mp_theta
                 else:
+                    d = planet.distance(midpoint.rect.left,
+                                        midpoint.rect.top,
+                                        midpoint.image.get_size(),
+                                        x, y, point.image.get_size())
                     xs = (point.speed * math.cos(point.theta) +
-                          0.001 * math.cos(mp_theta))
+                          0.001 * math.cos(d/2) * math.cos(mp_theta))
                     ys = (point.speed * math.sin(point.theta) +
-                          0.001 * math.sin(mp_theta))
+                          0.001 * math.cos(d/2) * math.sin(mp_theta))
                     point.speed = min(1, math.sqrt(xs*xs + ys*ys))
                     point.theta = math.atan2(ys, xs)
                 
