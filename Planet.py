@@ -176,8 +176,8 @@ class Planet:
         return (((self.bearing(lat2,lon2,lat,lon) + pi) % (2*pi),) +
                 self.get_coordinates_from_lat_lon(lat2, lon2, size))
 
-    def apply_velocity(self, p):
-        a = array([0,0,0])
+    def apply_velocity(self, p, v):
+        return p, v
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)

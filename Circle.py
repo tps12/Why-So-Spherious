@@ -68,7 +68,7 @@ class Display:
                         done = True
                         
             for point in points:
-                planet.apply_velocity(point.p)
+                point.p, point.v = planet.apply_velocity(point.p, point.v)
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
