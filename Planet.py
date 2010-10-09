@@ -8,6 +8,7 @@
 # http://www.math.ucsd.edu/~sbuss/ResearchWeb/spheremean/paper.pdf
 
 from math import *
+from numpy import *
 
 class Planet:
     def __init__(self, radius, tile_size, value):
@@ -174,6 +175,9 @@ class Planet:
 
         return (((self.bearing(lat2,lon2,lat,lon) + pi) % (2*pi),) +
                 self.get_coordinates_from_lat_lon(lat2, lon2, size))
+
+    def apply_velocity(self, p):
+        a = array([0,0,0])
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)

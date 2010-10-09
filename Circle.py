@@ -1,6 +1,8 @@
 import math
 import random
 
+from numpy import *
+
 import pygame
 from pygame.locals import *
 
@@ -42,11 +44,9 @@ class Display:
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
             row = random.randint(1, planet.row_count-1)
-            column = random.randint(0, planet.row_lengths[row]-1)
-            point.raw_coords = planet.get_coordinates(row, column,
-                                                      point.image.get_size())
-            point.theta = random.uniform(0, 2 * math.pi)
-            point.rect = pygame.Rect(point.raw_coords, point.image.get_size())
+            point.p = array([1,0,0])
+            point.theta = 0 if n == 0 else random.uniform(0, 2 * math.pi)
+            point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
 
         limit = pygame.time.Clock()
@@ -62,12 +62,9 @@ class Display:
                         done = True
                         
             for point in points:
-                x, y = point.raw_coords
-                theta, x2, y2 = planet.apply_bearing(0.1, point.theta, x, y,
-                                                     point.image.get_size())
-                point.theta = theta
-                point.raw_coords = x2,y2
-                point.rect.topleft = point.raw_coords
+                planet.apply_velocity(point.p)
+                point.rect.topleft = planet.vector_to_xy(point.p,
+                                                         point.image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
