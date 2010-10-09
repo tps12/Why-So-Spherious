@@ -2,6 +2,7 @@ import math
 import random
 
 from numpy import *
+from numpy.linalg import *
 
 import pygame
 from pygame.locals import *
@@ -44,8 +45,13 @@ class Display:
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
             row = random.randint(1, planet.row_count-1)
-            point.p = array([1,0,0])
+            a = array([random.uniform(-1) for i in range(3)])
+            point.p = a / norm(a)
             point.theta = 0 if n == 0 else random.uniform(0, 2 * math.pi)
+            u = zeros(3)
+            u[min(range(len(a)), key=lambda i: abs(point.p[i]))] = 1
+            v = cross(point.p, u)
+            point.v = v / norm(v)
             point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
 
