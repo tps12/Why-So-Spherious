@@ -77,11 +77,17 @@ class Display:
             midpoint.rect.topleft = planet.vector_to_xy(midpoint.p,
                 midpoint.image.get_size())
 
+            speed = sum([norm(p.v) for p in points])
             for point in points:
                 diff = midpoint.p - point.p
                 dist = math.acos(dot(midpoint.p, point.p))
-                point.v += 0.001 * (math.pi - dist) * (dot(diff, point.p) * point.p - diff)
+                if not speed:
+                    point.v = 0.1 * (math.pi - dist) * (dot(diff, point.p) * point.p - diff)
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
+                if norm(point.v) < 0.001:
+                    point.v = zeros(3)
+                else:
+                    point.v = 0.9 * point.v
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
