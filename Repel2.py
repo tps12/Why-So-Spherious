@@ -40,7 +40,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(6):
+        for n in range(20):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -79,7 +79,7 @@ class Display:
 
             for point in points:
                 diff = midpoint.p - point.p
-                point.v += 0.001 * (dot(diff, point.p) * point.p - diff)
+                point.v += 0.005 * (dot(diff, point.p) * point.p - diff)
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
