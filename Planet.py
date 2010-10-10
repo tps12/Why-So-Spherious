@@ -208,6 +208,9 @@ class Planet:
         else:
             return p, v
 
+    def project_on_plane(self, v, n):
+        return v - dot(v, n) * n
+
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
         ntheta = theta
