@@ -79,7 +79,8 @@ class Display:
 
             for point in points:
                 diff = midpoint.p - point.p
-                point.v += 0.005 * (dot(diff, point.p) * point.p - diff)
+                dist = math.acos(dot(midpoint.p, point.p))
+                point.v += 0.001 * (math.pi - dist) * (dot(diff, point.p) * point.p - diff)
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
