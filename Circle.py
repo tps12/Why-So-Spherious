@@ -51,7 +51,7 @@ class Display:
             u = zeros(3)
             u[min(range(len(a)), key=lambda i: abs(point.p[i]))] = 1
             v = cross(point.p, u)
-            point.v = v / norm(v)
+            point.v = planet.rotate(v / norm(v), point.p, random.uniform(0, 2*math.pi))
             point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
 
