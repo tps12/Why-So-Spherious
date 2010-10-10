@@ -133,6 +133,9 @@ class Planet:
     def weighted_average(self, xy_points, weights, sizes, size=None):
         ps = [self.xy_to_vector(xy_points[i][0], xy_points[i][1], sizes[i])
               for i in range(len(xy_points))]
+        return self.vector_to_xy(self.vector_weighted_average(ps, weights), size)
+
+    def vector_weighted_average(self, ps, weights):
         add_vectors = lambda p1, p2: tuple([p1[i]+p2[i] for i in range(len(p1))])
         vector_diff = lambda p1, p2: tuple([p1[i]-p2[i] for i in range(len(p1))])
         weighted_sum = reduce(
@@ -153,7 +156,7 @@ class Planet:
                  for i in range(len(p_stars))])
             mag_u = self.magnitude(u)
             if mag_u == last_u:
-                return self.vector_to_xy(q, size)
+                return q
             else:
                 last_u = mag_u
 
