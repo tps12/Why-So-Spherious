@@ -96,7 +96,7 @@ class Display:
                 v = -planet.project_on_plane(heatpoint.p - point.p, point.p)
                 point.v += decay(dist) * v / norm(v) / point.w
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
-                point.v = 0.5 * point.v
+                point.v = 0.75 * point.v
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
