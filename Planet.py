@@ -198,8 +198,8 @@ class Planet:
         axis = cross(p, v)
         axis = axis / norm(axis)
         
-        p_prime = self.rotate(p, axis, 0.01)
-        v_prime = self.rotate(v, axis, 0.01)
+        p_prime = self.rotate(p, axis, norm(v))
+        v_prime = self.rotate(v, axis, norm(v))
         
         return p_prime, v_prime
 
