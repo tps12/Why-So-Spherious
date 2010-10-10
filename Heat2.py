@@ -43,9 +43,12 @@ class Display:
         for n in range(20):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
-            pygame.draw.circle(point.image, (0,255,0), (5,5), 5)
             row = random.randint(1, planet.row_count-1)
             a = array([random.uniform(-1) for i in range(3)])
+            point.w = random.uniform(1,10)
+            pygame.draw.circle(point.image,
+                               (0,255 - int(point.w*16),0),
+                               (5,5), 5)
             point.p = a / norm(a)
             point.theta = 0 if n == 0 else random.uniform(0, 2 * math.pi)
             point.v = zeros(3)
@@ -79,24 +82,21 @@ class Display:
 
             midpoint.p = planet.vector_weighted_average(
                 [point.p for point in points.sprites()],
-                [1 for point in points.sprites()])
+                [point.w for point in points.sprites()])
             midpoint.rect.topleft = planet.vector_to_xy(midpoint.p,
                 midpoint.image.get_size())
 
             speed = sum([norm(p.v) for p in points])
             for point in points:
-                if not speed:
+                if speed < 0.05:
                     heatpoint.p = midpoint.p
                     heatpoint.rect.topleft = midpoint.rect.topleft
                 dist = math.acos(dot(heatpoint.p, point.p))
-                decay = lambda dist: 0.01 * (math.pi - dist)
+                decay = lambda dist: 0.01 * pow(dist - math.pi, 2)
                 v = -planet.project_on_plane(heatpoint.p - point.p, point.p)
-                point.v += decay(dist) * v / norm(v)
+                point.v += decay(dist) * v / norm(v) / point.w
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
-                if norm(point.v) < 0.001:
-                    point.v = zeros(3)
-                else:
-                    point.v = 0.9 * point.v
+                point.v = 0.5 * point.v
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
