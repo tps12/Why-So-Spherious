@@ -199,9 +199,9 @@ class Planet:
         axis = axis / norm(axis)
         
         p_prime = self.rotate(p, axis, 0.01)
+        v_prime = self.rotate(v, axis, 0.01)
         
-        
-        return p_prime, v
+        return p_prime, v_prime
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
