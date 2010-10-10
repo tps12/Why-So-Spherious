@@ -198,13 +198,15 @@ class Planet:
                        
 
     def apply_velocity(self, p, v):
-        axis = cross(p, v)
-        axis = axis / norm(axis)
-        
-        p_prime = self.rotate(p, axis, norm(v))
-        v_prime = self.rotate(v, axis, norm(v))
-        
-        return p_prime, v_prime
+        d = norm(v)
+
+        if d:
+            axis = cross(p, v)
+            axis = axis / norm(axis)
+
+            return tuple([self.rotate(i, axis, d) for i in (p,v)])
+        else:
+            return p, v
 
     def apply_heading(self, v, theta, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
