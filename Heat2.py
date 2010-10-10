@@ -89,8 +89,9 @@ class Display:
                     heatpoint.p = midpoint.p
                     heatpoint.rect.topleft = midpoint.rect.topleft
                 dist = math.acos(dot(heatpoint.p, point.p))
+                decay = lambda dist: 0.01 * (math.pi - dist)
                 v = -planet.project_on_plane(heatpoint.p - point.p, point.p)
-                point.v += 0.01 * (math.pi - dist) * v
+                point.v += decay(dist) * v / norm(v)
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 if norm(point.v) < 0.001:
                     point.v = zeros(3)
