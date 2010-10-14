@@ -108,14 +108,16 @@ class Display:
                         continue
                     if math.acos(dot(point.p, other.p)) < 0.05:
                         if other in merge:
-                            merge[other].append(point)
+                            if not point in merge[other]:
+                                merge[other].append(point)
                         else:
                             merge[point] = [other]
-
+      
             newpoints = []
             seen = []
             for first,merging in merge.items():
                 merging.append(first)
+                print 'merging',len(merging),[m.w for m in merging],'into',sum([m.w for m in merging])
                 for point in merging:
                     seen.append(point)
                     
@@ -131,6 +133,28 @@ class Display:
                 point.v = sum([m.v/m.w for m in merging])
                 point.rect = pygame.Rect((0,0), point.image.get_size())
                 newpoints.append(point)
+
+            for point in points:
+                if point in seen:
+                    continue
+                if math.acos(dot(heatpoint.p, point.p)) < 0.3:
+                    added = []
+                    for i in range(2):
+                        half = pygame.sprite.Sprite()
+                        half.image = pygame.Surface((10,10))
+                        half.w = point.w/2
+                        pygame.draw.circle(half.image,
+                                           (0,255 - int(half.w*16),0),
+                                           (5,5), 5)
+                        half.p = point.p
+                        theta = -math.pi/4 + i * math.pi/2
+                        half.v = planet.rotate(point.v, half.p, theta)
+                        half.rect = pygame.Rect((0,0), half.image.get_size())
+                        newpoints.append(half)
+                        added.append(half)
+                    print 'splitting',point.w,'into',[a.w for a in added]
+                    seen.append(point)
+            
             save = [p for p in points if not p in seen]
             points.empty()
             points.add(newpoints)
