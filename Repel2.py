@@ -79,10 +79,8 @@ class Display:
 
             speed = sum([norm(p.v) for p in points])
             for point in points:
-                diff = midpoint.p - point.p
-                dist = math.acos(dot(midpoint.p, point.p))
                 if not speed:
-                    point.v = 0.1 * (math.pi - dist) * (dot(diff, point.p) * point.p - diff)
+                    point.v = 0.1 * planet.repel_from_point(point.p, midpoint.p)
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 if norm(point.v) < 0.001:
                     point.v = zeros(3)

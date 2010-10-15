@@ -208,6 +208,11 @@ class Planet:
         else:
             return p, v
 
+    def repel_from_point(self, p, q):
+        diff = q - p
+        dist = math.acos(dot(q, p))
+        return (pi - dist) * (dot(diff, p) * p - diff)
+
     def project_on_plane(self, v, n):
         return v - dot(v, n) * n
 
