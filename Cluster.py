@@ -40,7 +40,7 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(10):
+        for n in range(20):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -113,23 +113,23 @@ class Display:
                 midpoints.add(cluster)
 
                 for point in c:
-                    if norm(point.v) < 0.01:
-                        point.v = 0.05 * planet.repel_from_point(point.p, p)
+                    if norm(point.v) < 0.005:
+                        point.v = 0.01 * planet.repel_from_point(point.p, p)
                     seen.append(point)
 
             for point in points:
                 if not point in seen:
-                    if norm(point.v) < 0.01:
+                    if norm(point.v) < 0.0005:
                         u = zeros(3)
                         u[min(range(len(a)), key=lambda i: abs(point.p[i]))] = 1
                         v = cross(point.p, u)
-                        point.v = 0.05 * planet.rotate(v / norm(v), point.p,
+                        point.v = 0.001 * planet.rotate(v / norm(v), point.p,
                                                        random.uniform(0, 2*math.pi))
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
-                if norm(point.v) < 0.001:
+                if norm(point.v) < 0.0001:
                     point.v = zeros(3)
                 else:
-                    point.v = 0.99 * point.v
+                    point.v = 0.999 * point.v
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
