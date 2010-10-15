@@ -98,8 +98,6 @@ class Display:
                         else:
                             clusters.append([point, other])
 
-            speed = sum([norm(p.v) for p in points])
-
             seen = []
             for c in clusters:
                 cluster = pygame.sprite.Sprite()
@@ -114,7 +112,7 @@ class Display:
                 midpoints.add(cluster)
 
                 for point in c:
-                    if not speed:
+                    if not norm(point.v):
                         point.v = 0.1 * planet.repel_from_point(point.p, p)
 
             for point in points:
