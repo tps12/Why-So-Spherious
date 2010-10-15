@@ -77,18 +77,6 @@ class Display:
             midpoint.rect.topleft = planet.vector_to_xy(midpoint.p,
                 midpoint.image.get_size())
 
-            speed = sum([norm(p.v) for p in points])
-            for point in points:
-                if not speed:
-                    point.v = 0.1 * planet.repel_from_point(point.p, midpoint.p)
-                point.p, point.v = planet.apply_velocity(point.p, point.v)
-                if norm(point.v) < 0.001:
-                    point.v = zeros(3)
-                else:
-                    point.v = 0.9 * point.v
-                point.rect.topleft = planet.vector_to_xy(point.p,
-                                                         point.image.get_size())
-
             midpoints.empty()
             midpoints.add(midpoint)
 
@@ -110,6 +98,9 @@ class Display:
                         else:
                             clusters.append([point, other])
 
+            speed = sum([norm(p.v) for p in points])
+
+            seen = []
             for c in clusters:
                 cluster = pygame.sprite.Sprite()
                 cluster.image = pygame.Surface((10,10))
@@ -121,6 +112,19 @@ class Display:
                 cluster.rect.topleft = planet.vector_to_xy(p,
                                                            cluster.image.get_size())
                 midpoints.add(cluster)
+
+                for point in c:
+                    if not speed:
+                        point.v = 0.1 * planet.repel_from_point(point.p, p)
+
+            for point in points:
+                point.p, point.v = planet.apply_velocity(point.p, point.v)
+                if norm(point.v) < 0.001:
+                    point.v = zeros(3)
+                else:
+                    point.v = 0.9 * point.v
+                point.rect.topleft = planet.vector_to_xy(point.p,
+                                                         point.image.get_size())
 
             points.clear(screen, background)
             points.draw(screen)
