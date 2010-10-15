@@ -47,7 +47,6 @@ class Display:
             row = random.randint(1, planet.row_count-1)
             a = array([random.uniform(-1) for i in range(3)])
             point.p = a / norm(a)
-            point.theta = 0 if n == 0 else random.uniform(0, 2 * math.pi)
             point.v = zeros(3)
             point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
@@ -114,8 +113,13 @@ class Display:
                 for point in c:
                     if not norm(point.v):
                         point.v = 0.1 * planet.repel_from_point(point.p, p)
+                    seen.append(point)
 
             for point in points:
+                if not point in seen:
+                    if not norm(point.v):
+                        point.v = 0.1 * planet.repel_from_point(point.p,
+                                                                midpoint.p)
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 if norm(point.v) < 0.001:
                     point.v = zeros(3)
