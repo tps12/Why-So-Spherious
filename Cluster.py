@@ -43,8 +43,9 @@ class Display:
         for n in range(20):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
-            pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
             row = random.randint(1, planet.row_count-1)
+            point.w = random.uniform(1,10)
+            pygame.draw.circle(point.image, (255 - point.w*12,0,0), (5,5), 5)
             a = array([random.uniform(-0.1,0.1),
                        1,
                        random.uniform(-0.1,0.1)])
@@ -74,7 +75,7 @@ class Display:
 
             midpoint.p = planet.vector_weighted_average(
                 [point.p for point in points.sprites()],
-                [1 for point in points.sprites()])
+                [point.w for point in points.sprites()])
             midpoint.rect.topleft = planet.vector_to_xy(midpoint.p,
                 midpoint.image.get_size())
 
@@ -114,7 +115,7 @@ class Display:
 
                 for point in c:
                     if norm(point.v) < 0.005:
-                        point.v = 0.01 * planet.repel_from_point(point.p, p)
+                        point.v = 0.01 * planet.repel_from_point(point.p, p) / point.w
                     seen.append(point)
 
             for point in points:
@@ -124,7 +125,7 @@ class Display:
                         u[min(range(len(a)), key=lambda i: abs(point.p[i]))] = 1
                         v = cross(point.p, u)
                         point.v = 0.001 * planet.rotate(v / norm(v), point.p,
-                                                       random.uniform(0, 2*math.pi))
+                                                       random.uniform(0, 2*math.pi)) / point.w
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 if norm(point.v) < 0.0001:
                     point.v = zeros(3)
