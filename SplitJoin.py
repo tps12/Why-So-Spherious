@@ -137,7 +137,7 @@ class Display:
             for point in points:
                 if point in seen:
                     continue
-                if math.acos(dot(heatpoint.p, point.p)) < 0.3:
+                if point.w > 0.5 and norm(point.v) > 0.1:
                     added = []
                     for i in range(2):
                         half = pygame.sprite.Sprite()
@@ -148,7 +148,7 @@ class Display:
                                            (5,5), 5)
                         half.p = point.p
                         theta = -math.pi/4 + i * math.pi/2
-                        half.v = planet.rotate(point.v, half.p, theta)
+                        half.v = planet.rotate(point.v, half.p, theta)/2
                         half.rect = pygame.Rect((0,0), half.image.get_size())
                         newpoints.append(half)
                         added.append(half)
