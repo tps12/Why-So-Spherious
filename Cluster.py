@@ -114,25 +114,46 @@ class Display:
                 midpoints.add(cluster)
 
                 for point in c:
-                    if norm(point.v) < 0.005:
-                        point.v = 0.01 * planet.repel_from_point(point.p, p) / point.w
+                    if norm(point.v) < 0.05:
+                        point.v = 0.1 * planet.repel_from_point(point.p, p) / point.w
                     seen.append(point)
 
+            newpoints = []
             for point in points:
                 if not point in seen:
-                    if norm(point.v) < 0.0005:
+                    if norm(point.v) < 0.05:
                         u = zeros(3)
                         u[min(range(len(a)), key=lambda i: abs(point.p[i]))] = 1
                         v = cross(point.p, u)
-                        point.v = 0.001 * planet.rotate(v / norm(v), point.p,
-                                                       random.uniform(0, 2*math.pi)) / point.w
+                        v = 0.01 * planet.rotate(v / norm(v), point.p,
+                                                  random.uniform(0, 2*math.pi))
+                        
+                        if point.w < 0.25:
+                            point.v = v / point.w
+                        else:
+                            point.w /= 2
+                            point.v = v / point.w
+                            
+                            newpoint = pygame.sprite.Sprite()
+                            newpoint.image = pygame.Surface((10,10))
+                            row = random.randint(1, planet.row_count-1)
+                            newpoint.w = point.w
+                            pygame.draw.circle(point.image, (255 - point.w*12,0,0), (5,5), 5)
+                            pygame.draw.circle(newpoint.image, (255 - newpoint.w*12,0,0), (5,5), 5)
+                            newpoint.p = point.p
+                            newpoint.v = -point.v
+                            newpoint.rect = pygame.Rect((0,0), newpoint.image.get_size())
+                            newpoints.append(newpoint)
+                            
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
-                if norm(point.v) < 0.0001:
+                if norm(point.v) < 0.001:
                     point.v = zeros(3)
                 else:
                     point.v = 0.999 * point.v
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
+
+            points.add(newpoints)
 
             points.clear(screen, background)
             points.draw(screen)
