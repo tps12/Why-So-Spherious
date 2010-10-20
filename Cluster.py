@@ -75,6 +75,7 @@ class Display:
 
             midpoints.empty()
 
+            # identify clusters of nearby points
             clusters = []
             for point in points:
                 for other in points:
@@ -93,6 +94,7 @@ class Display:
                         else:
                             clusters.append([point, other])
 
+            # repel clustered points from center of cluster
             seen = []
             for c in clusters:
                 cluster = pygame.sprite.Sprite()
@@ -111,6 +113,7 @@ class Display:
                         point.v = 0.1 * planet.repel_from_point(point.p, p) / point.w
                     seen.append(point)
 
+            # move or split up isolated points
             newpoints = []
             for point in points:
                 if not point in seen:
@@ -148,6 +151,7 @@ class Display:
 
             points.add(newpoints)
 
+            # calculate overall midpoint
             midpoint.p = planet.vector_weighted_average(
                 [point.p for point in points.sprites()],
                 [point.w for point in points.sprites()])
