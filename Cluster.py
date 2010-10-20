@@ -73,14 +73,7 @@ class Display:
                     if event.key == K_ESCAPE:
                         done = True
 
-            midpoint.p = planet.vector_weighted_average(
-                [point.p for point in points.sprites()],
-                [point.w for point in points.sprites()])
-            midpoint.rect.topleft = planet.vector_to_xy(midpoint.p,
-                midpoint.image.get_size())
-
             midpoints.empty()
-            midpoints.add(midpoint)
 
             clusters = []
             for point in points:
@@ -154,6 +147,14 @@ class Display:
                                                          point.image.get_size())
 
             points.add(newpoints)
+
+            midpoint.p = planet.vector_weighted_average(
+                [point.p for point in points.sprites()],
+                [point.w for point in points.sprites()])
+            midpoint.rect.topleft = planet.vector_to_xy(midpoint.p,
+                midpoint.image.get_size())
+
+            midpoints.add(midpoint)
 
             points.clear(screen, background)
             points.draw(screen)
