@@ -73,7 +73,22 @@ class Display:
                     if event.key == K_ESCAPE:
                         done = True
 
-            midpoints.empty()
+            # join colliding points
+            for point in points:
+                for other in points:
+                    if point == other:
+                        continue
+                    if math.acos(dot(point.p, other.p)) < 0.1:
+                        d = other.p - point.p
+                        if (abs(math.acos(dot(d, point.v))) < math.pi /2 and
+                            abs(math.acos(dot(d, other.v))) > math.pi / 2):
+                            point.p = planet.vector_weighted_average(
+                                [point.p, other.p], [point.w, other.w])
+                            v = array(planet.vector_weighted_average(
+                                [point.v, other.v], [point.w, other.w]))
+                            point.v = (norm(point.v) + norm(other.v)) * v
+                            point.w = point.w + other.w
+                            points.remove(other)
 
             # identify clusters of nearby points
             clusters = []
@@ -95,6 +110,7 @@ class Display:
                             clusters.append([point, other])
 
             # repel clustered points from center of cluster
+            midpoints.empty()
             seen = []
             for c in clusters:
                 cluster = pygame.sprite.Sprite()
@@ -113,9 +129,10 @@ class Display:
                         point.v = 0.1 * planet.repel_from_point(point.p, p) / point.w
                     seen.append(point)
 
-            # move or split up isolated points
+            # apply velocities 
             newpoints = []
             for point in points:
+                # move or split isolated points
                 if not point in seen:
                     if norm(point.v) < 0.05:
                         u = zeros(3)
@@ -149,7 +166,7 @@ class Display:
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
-            points.add(newpoints)
+            points.add(newpoints)                
 
             # calculate overall midpoint
             midpoint.p = planet.vector_weighted_average(
