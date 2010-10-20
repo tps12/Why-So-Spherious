@@ -78,16 +78,17 @@ class Display:
                 for other in points:
                     if point == other:
                         continue
-                    if math.acos(dot(point.p, other.p)) < 0.1:
+                    if math.acos(dot(point.p, other.p)) < 0.05:
                         d = other.p - point.p
                         if (abs(math.acos(dot(d, point.v))) < math.pi /2 and
                             abs(math.acos(dot(d, other.v))) > math.pi / 2):
-                            point.p = planet.vector_weighted_average(
-                                [point.p, other.p], [point.w, other.w])
+                            point.p = array(planet.vector_weighted_average(
+                                [point.p, other.p], [point.w, other.w]))
                             v = array(planet.vector_weighted_average(
                                 [point.v, other.v], [point.w, other.w]))
                             point.v = (norm(point.v) + norm(other.v)) * v
                             point.w = point.w + other.w
+                            pygame.draw.circle(point.image, (255 - point.w*12,0,0), (5,5), 5)
                             points.remove(other)
 
             # identify clusters of nearby points
