@@ -147,10 +147,14 @@ class Display:
                 sprite = pygame.sprite.Sprite()
                 cmin, cmax = ranges(coords)
                 sprite.image = pygame.Surface((cmax[0]-cmin[0],cmax[1]-cmin[1]))
-                pygame.draw.polygon(sprite.image, (0,255,0),
+                px,py = planet.vector_to_xy(point.p)
+                inproj = [planet.in_projection(px+x-cmin[0]-sprite.image.get_width()/2.0,
+                                               py+y-cmin[1]-sprite.image.get_height()/2.0)
+                          for (x,y) in coords]
+                color = (0,255,0) if all(inproj) else (255,0,0)
+                pygame.draw.polygon(sprite.image, color,
                                     [(c[0]-cmin[0], c[1]-cmin[1])
                                      for c in coords], 1)
-                px,py = planet.vector_to_xy(point.p)
                 sprite.rect = pygame.Rect((px-sprite.image.get_width()/2,
                                            py-sprite.image.get_height()/2),
                                           sprite.image.get_size())
