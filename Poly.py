@@ -139,8 +139,8 @@ class Display:
                     # rotate point around it by d
                     p = planet.rotate(point.p, u, d)
 
-                    # and then around point by theta
-                    p = planet.rotate(p, point.p, th)
+                    # and then around point by -theta
+                    p = planet.rotate(p, point.p, -th)
 
                     coords.append(planet.vector_to_xy(p))
 
