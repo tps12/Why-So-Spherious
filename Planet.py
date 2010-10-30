@@ -79,12 +79,14 @@ class Planet:
     def get_row_column(self, x, y, size=None):
         size = size or (0,0)
         row = y + size[1]/2
-        return row, x - self.row_offsets[int(row)] + size[0]/2
+        return (row,
+                x - self.row_offsets[int(row)] + size[0]/2
+                if 0 <= row < self.row_count else None)
 
     def in_projection(self, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
-        return (row >= 0 and row < self.row_count and
-                column >= 0 and column < len(self.rows[int(row)]))
+        return (0 <= row < self.row_count and
+                0 <= column < len(self.rows[int(row)]))
 
     def get_lat_lon(self, x, y, size=None):
         row, column = self.get_row_column(x, y, size)
