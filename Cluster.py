@@ -40,16 +40,16 @@ class Display:
 
         points = pygame.sprite.Group()
 
-        for n in range(20):
+        for n in range(1):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
-            row = random.randint(1, planet.row_count-1)
-            point.w = random.uniform(1,10)
+            point.w = 10.#random.uniform(1,10)
             pygame.draw.circle(point.image, (255 - point.w*12,0,0), (5,5), 5)
-            a = array([random.uniform(-0.1,0.1),
-                       1,
-                       random.uniform(-0.1,0.1)])
+            a = array([random.uniform(-1,1),
+                       random.uniform(-1,1),
+                       random.uniform(-1,1)])
             point.p = a / norm(a)
+            print point.p
             point.v = zeros(3)
             point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
@@ -78,7 +78,7 @@ class Display:
                 for other in points:
                     if point == other:
                         continue
-                    if math.acos(dot(point.p, other.p)) < 0.05:
+                    if math.acos(dot(point.p, other.p)) < 0.1:
                         d = other.p - point.p
                         if (abs(math.acos(dot(d, point.v))) < math.pi /2 and
                             abs(math.acos(dot(d, other.v))) > math.pi / 2):
@@ -128,6 +128,8 @@ class Display:
                 for point in c:
                     if norm(point.v) < 0.05:
                         point.v = 0.1 * planet.repel_from_point(point.p, p) / point.w
+                        if norm(point.v > 0.15):
+                            point.v = 0.15 * point.v / norm(point.v)
                     seen.append(point)
 
             # apply velocities 
@@ -160,10 +162,10 @@ class Display:
                             newpoints.append(newpoint)
                             
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
-                if norm(point.v) < 0.001:
+                if norm(point.v) < 0.01:
                     point.v = zeros(3)
                 else:
-                    point.v = 0.999 * point.v
+                    point.v = 0.99 * point.v
                 point.rect.topleft = planet.vector_to_xy(point.p,
                                                          point.image.get_size())
 
@@ -186,7 +188,7 @@ class Display:
             
             pygame.display.flip()
 
-            limit.tick()
+            limit.tick(25)
 
 if __name__ == '__main__':
     Display().main_loop()
