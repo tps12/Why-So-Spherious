@@ -100,6 +100,17 @@ class Display:
             point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
 
+        def add_shape_coords(coords, cmin, cmax, px, py):
+            sprite = pygame.sprite.Sprite()
+            sprite.image = pygame.Surface((cmax[0]-cmin[0],cmax[1]-cmin[1]))
+            pygame.draw.polygon(sprite.image, (0,255,0),
+                                [(c[0]-cmin[0], c[1]-cmin[1])
+                                 for c in coords], 1)
+            sprite.rect = pygame.Rect((px-sprite.image.get_width()/2,
+                                       py-sprite.image.get_height()/2),
+                                      sprite.image.get_size())
+            shapes.add(sprite)
+
         limit = pygame.time.Clock()
 
         done = False
@@ -144,21 +155,24 @@ class Display:
 
                     coords.append(planet.vector_to_xy(p))
 
-                sprite = pygame.sprite.Sprite()
                 cmin, cmax = ranges(coords)
                 px,py = planet.vector_to_xy(point.p)
                 inproj = [planet.in_projection(px+x-(cmin[0]+cmax[0])/2,
                                                py+y-(cmin[1]+cmax[1])/2)
                           for (x,y) in coords]
-                color = (0,255,0) if all(inproj) else (255,0,0)
-                sprite.image = pygame.Surface((cmax[0]-cmin[0],cmax[1]-cmin[1]))
-                pygame.draw.polygon(sprite.image, color,
-                                    [(c[0]-cmin[0], c[1]-cmin[1])
-                                     for c in coords], 1)
-                sprite.rect = pygame.Rect((px-sprite.image.get_width()/2,
-                                           py-sprite.image.get_height()/2),
-                                          sprite.image.get_size())
-                shapes.add(sprite)
+                if all(inproj):
+                    add_shape_coords(coords, cmin, cmax, px, py)
+                else:
+                    left = []
+                    right = []
+                    for c in coords:
+                        (left if c[0] < planet.max_row/2 else right).append(c)
+                    if (len(left) > 1):
+                        cmin, cmax = ranges(left)
+                        add_shape_coords(left, cmin, cmax, px, py)
+                    if (len(right) > 1):
+                        cmin, cmax = ranges(right)
+                        add_shape_coords(right, cmin, cmax, px, py)
 
             points.clear(screen, background)
             orients.clear(screen, background)
