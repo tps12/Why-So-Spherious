@@ -41,7 +41,7 @@ class Display:
         points = pygame.sprite.Group()
         orients = pygame.sprite.Group()
 
-        for n in range(1):
+        for n in range(3):
             point = pygame.sprite.Sprite()
             point.image = pygame.Surface((10,10))
             pygame.draw.circle(point.image, (255,0,0), (5,5), 5)
@@ -95,6 +95,7 @@ class Display:
                                                            point.o.image.get_size())
 
             points.clear(screen, background)
+            orients.clear(screen, background)
             points.draw(screen)
             orients.draw(screen)
             
