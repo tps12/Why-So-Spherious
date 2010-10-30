@@ -7,6 +7,8 @@ from numpy.linalg import *
 import pygame
 from pygame.locals import *
 
+from shapely.geometry import Polygon
+
 from Planet import Planet
 
 class Display:
@@ -40,6 +42,7 @@ class Display:
 
         points = pygame.sprite.Group()
         orients = pygame.sprite.Group()
+        shapes = pygame.sprite.Group()
 
         for n in range(3):
             point = pygame.sprite.Sprite()
@@ -69,7 +72,12 @@ class Display:
             point.o.image = pygame.Surface((6,6))
             pygame.draw.circle(point.o.image, (0,0,255), (3,3), 3)
             point.o.rect = pygame.Rect((0,0), point.o.image.get_size())
-            orients.add(point.o)            
+            orients.add(point.o)
+
+            # polygon points
+            point.shape = [(.1,.23),(.12,.43),(.13,.52),(.25,.54),
+                           (.3,.43),(.43,.48),(.53,.31),(.48,.14),
+                           (.5,.1)]
             
             point.rect = pygame.Rect((0,0), point.image.get_size())
             points.add(point)
@@ -85,7 +93,8 @@ class Display:
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         done = True
-                        
+
+            shapes.empty()
             for point in points:
                 point.p, point.v = planet.apply_velocity(point.p, point.v)
                 point.o.p, ov = planet.apply_velocity(point.o.p, point.v)
@@ -96,6 +105,7 @@ class Display:
 
             points.clear(screen, background)
             orients.clear(screen, background)
+            shapes.clear(screen, background)
             points.draw(screen)
             orients.draw(screen)
             
