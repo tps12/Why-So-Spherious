@@ -11,6 +11,24 @@ from shapely.geometry import Polygon
 
 from Planet import Planet
 
+def offset(p, dx, dy):
+    x,y = p
+    return x + dx, y + dy
+
+def rotate(p, loc, th):
+    x,y = [p[i]-loc[i] for i in range(2)]
+    s,c = sin(th),cos(th)
+    return x*c - y*s + loc[0], x*s + y*c + loc[1]
+
+def defloat(p):
+    x,y = p
+    return int(x+0.5), int(y+0.5)
+
+def ranges(ps):
+    return [[f([p[i] for p in ps])
+             for i in range(2)]
+            for f in (min,max)]
+
 class Display:
 
     def main_loop(self):
@@ -103,11 +121,45 @@ class Display:
                 point.o.rect.topleft = planet.vector_to_xy(point.o.p,
                                                            point.o.image.get_size())
 
+                shape = Polygon(point.shape)
+                c = shape.centroid.coords[0]
+
+                coords = []
+                for vertex in point.shape:
+                    # find distance from centroid
+                    d = math.sqrt(sum([(vertex[i]-c[i])*(vertex[i]-c[i])
+                                       for i in range(2)]))
+                    # find angle from local north
+                    th = math.atan2(vertex[0]-c[0],vertex[1]-c[1])
+
+                    # axis of rotation separating point from orientation point
+                    u = cross(point.p, point.o.p)
+                    u = u / norm(u)
+
+                    # rotate point around it by d
+                    p = planet.rotate(point.p, u, d)
+
+                    # and then around point by theta
+                    p = planet.rotate(p, point.p, th)
+
+                    coords.append(planet.vector_to_xy(p))
+
+                sprite = pygame.sprite.Sprite()
+                cmin, cmax = ranges(coords)
+                sprite.image = pygame.Surface((cmax[0]-cmin[0],cmax[1]-cmin[1]))
+                pygame.draw.polygon(sprite.image, (0,255,0),
+                                    [(c[0]-cmin[0], c[1]-cmin[1])
+                                     for c in coords], 1)
+                sprite.rect = pygame.Rect(point.rect.topleft,
+                                          sprite.image.get_size())
+                shapes.add(sprite)
+
             points.clear(screen, background)
             orients.clear(screen, background)
             shapes.clear(screen, background)
             points.draw(screen)
             orients.draw(screen)
+            shapes.draw(screen)
             
             pygame.display.flip()
 
