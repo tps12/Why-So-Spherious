@@ -150,16 +150,17 @@ class Display:
                 pygame.draw.polygon(sprite.image, (0,255,0),
                                     [(c[0]-cmin[0], c[1]-cmin[1])
                                      for c in coords], 1)
-                sprite.rect = pygame.Rect(point.rect.topleft,
+                sprite.rect = pygame.Rect((point.rect.left-sprite.image.get_width()/2,
+                                           point.rect.top-sprite.image.get_height()/2),
                                           sprite.image.get_size())
                 shapes.add(sprite)
 
             points.clear(screen, background)
             orients.clear(screen, background)
             shapes.clear(screen, background)
+            shapes.draw(screen)
             points.draw(screen)
             orients.draw(screen)
-            shapes.draw(screen)
             
             pygame.display.flip()
 
