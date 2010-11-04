@@ -124,6 +124,11 @@ while not done:
                                                  mouse.get_pos())
             dragging = None
 
+    if not dragging is None:
+        polys[dragging].position = move_poly(polys[dragging],
+                                             mouse.get_pos())
+            
+
     sprites.empty()
     for poly in polys:
         sprite = Sprite()
