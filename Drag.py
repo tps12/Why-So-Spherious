@@ -96,11 +96,13 @@ def move_poly(poly, point):
 background = Surface(screen.get_size())
 background.fill((128,128,128))
 
+screen.blit(background, (0,0))
+
 sprites = Group()
 
 for poly in polys:
     sprite = Sprite()
-    sprite.image = Surface(screen.get_size())
+    sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
     draw_poly(poly, sprite.image)
     sprite.rect = Rect((0,0), sprite.image.get_size())
     sprites.add(sprite)
@@ -128,7 +130,6 @@ while not done:
             polys[dragging].position = move_poly(polys[dragging],
                                                  mouse.get_pos())
             dragging = None
-
     
     sprites.clear(screen, background)
     sprites.draw(screen)
