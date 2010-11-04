@@ -3,8 +3,9 @@ from shapely.geometry import Point, Polygon
 from math import *
 
 import pygame
-from pygame import display, draw, event, mouse, Surface
+from pygame import display, draw, event, mouse, Rect, Surface
 from pygame.locals import *
+from pygame.sprite import *
 
 pygame.init()
 
@@ -53,7 +54,7 @@ def defloat(p):
     x,y = p
     return int(x+0.5), int(y+0.5)
 
-def draw_poly(poly):
+def draw_poly(poly, surface):
     polygon = Polygon(poly.points)
     if poly.orientation:
         c = polygon.centroid.coords[0]
@@ -62,11 +63,11 @@ def draw_poly(poly):
     c = polygon.centroid.coords[0]
     p = poly.position
     dx, dy = [p[i] - c[i] for i in range(2)]
-    draw.polygon(screen, (0,255,0),
+    draw.polygon(surface, (0,255,0),
                  [defloat(scale(offset(p, dx, dy)))
                   for p in polygon.exterior.coords],
                  1)
-    draw.circle(screen, (0,255,0),
+    draw.circle(surface, (0,255,0),
                 defloat(scale(offset(c, dx, dy))),
                 3)
 
@@ -92,8 +93,17 @@ def move_poly(poly, point):
     dx, dy = [p[i] - c[i] for i in range(2)]
     return offset(unscale(point), -dx, -dy)
 
+background = Surface(screen.get_size())
+background.fill((128,128,128))
+
+sprites = Group()
+
 for poly in polys:
-    draw_poly(poly)
+    sprite = Sprite()
+    sprite.image = Surface(screen.get_size())
+    draw_poly(poly, sprite.image)
+    sprite.rect = Rect((0,0), sprite.image.get_size())
+    sprites.add(sprite)
 
 done = False
 
@@ -118,5 +128,8 @@ while not done:
             polys[dragging].position = move_poly(polys[dragging],
                                                  mouse.get_pos())
             dragging = None
-                
+
+    
+    sprites.clear(screen, background)
+    sprites.draw(screen)
     display.flip()
