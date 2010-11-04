@@ -100,13 +100,6 @@ screen.blit(background, (0,0))
 
 sprites = Group()
 
-for poly in polys:
-    sprite = Sprite()
-    sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
-    draw_poly(poly, sprite.image)
-    sprite.rect = Rect((0,0), sprite.image.get_size())
-    sprites.add(sprite)
-
 done = False
 
 dragging = None
@@ -130,7 +123,15 @@ while not done:
             polys[dragging].position = move_poly(polys[dragging],
                                                  mouse.get_pos())
             dragging = None
-    
+
+    sprites.empty()
+    for poly in polys:
+        sprite = Sprite()
+        sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
+        draw_poly(poly, sprite.image)
+        sprite.rect = Rect((0,0), sprite.image.get_size())
+        sprites.add(sprite)
+
     sprites.clear(screen, background)
     sprites.draw(screen)
     display.flip()
