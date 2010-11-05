@@ -90,7 +90,17 @@ def in_poly(point, poly):
     return polygon.contains(Point(offset(unscale(point), -dx, -dy)))
 
 def intersect(a, b):
-    ap, bp = orient_polygon(a), orient_polygon(b)
+    polygons = []
+    
+    for poly in [a, b]:
+        polygon = orient_polygon(poly)
+        c = polygon.centroid.coords[0]
+        p = poly.position
+        dx, dy = [p[i] - c[i] for i in range(2)]
+        polygons.append(Polygon([offset(p, dx, dy)
+                                 for p in polygon.exterior.coords]))
+    ap, bp = polygons[0], polygons[1]
+    
     return Poly(ap.intersection(bp).exterior.coords, a.position, 0)
 
 background = Surface(screen.get_size())
@@ -134,13 +144,15 @@ while not done:
         sprites.add(sprite)
 
         for other in polys:
+            if other is poly:
+                continue
             intersection = intersect(poly, other)
             if not intersection is None:
                 sprite = Sprite()
                 sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
                 draw_poly(intersection, sprite.image, (255,255,0), 0)
                 sprite.rect = Rect((0,0), sprite.image.get_size())
-                #sprites.add(sprite)
+                sprites.add(sprite)
 
     sprites.clear(screen, background)
     sprites.draw(screen)
