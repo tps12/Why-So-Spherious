@@ -1,4 +1,5 @@
 from shapely.geometry import Point, Polygon
+from shapely.ops import polygonize
 
 from math import *
 
@@ -101,6 +102,10 @@ def intersect(a, b):
                                  for p in polygon.exterior.coords]))
     ap, bp = polygons[0], polygons[1]
     overlap = ap.intersection(bp)
+
+    if not hasattr(overlap, 'exterior'):
+        ps = [p for p in polygonize(overlap)]
+        overlap = ps[0]
     
     return [Poly(overlap.exterior.coords,
                  overlap.centroid.coords[0], 0)]
