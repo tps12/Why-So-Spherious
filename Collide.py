@@ -146,16 +146,16 @@ while not done:
         polys[dragging].position = unscale(mouse.get_pos())
         
     sprites.empty()
-    for poly in polys:
+    for i in range(len(polys)):
+        poly = polys[i]
         sprite = Sprite()
         sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
         draw_poly(poly, sprite.image)
         sprite.rect = Rect((0,0), sprite.image.get_size())
         sprites.add(sprite)
 
-        for other in polys:
-            if other is poly:
-                continue
+        for j in range(i+1, len(polys)):
+            other = polys[j]
             for intersection in intersect(poly, other):
                 sprite = Sprite()
                 sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
