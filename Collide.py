@@ -102,8 +102,8 @@ def intersect(a, b):
     ap, bp = polygons[0], polygons[1]
     overlap = ap.intersection(bp)
     
-    return Poly(overlap.exterior.coords,
-                overlap.centroid.coords[0], 0)
+    return [Poly(overlap.exterior.coords,
+                 overlap.centroid.coords[0], 0)]
 
 background = Surface(screen.get_size())
 background.fill((128,128,128))
@@ -148,8 +148,7 @@ while not done:
         for other in polys:
             if other is poly:
                 continue
-            intersection = intersect(poly, other)
-            if not intersection is None:
+            for intersection in intersect(poly, other):
                 sprite = Sprite()
                 sprite.image = Surface(screen.get_size(), flags=SRCALPHA)
                 draw_poly(intersection, sprite.image, (255,255,0), 0)
