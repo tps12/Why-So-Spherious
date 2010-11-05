@@ -107,8 +107,8 @@ def intersect(a, b):
         return []
 
     if not hasattr(overlap, 'exterior'):
-        ps = [p for p in polygonize(overlap)]
-        overlap = ps[0]
+        return [Poly(p.exterior.coords, p.centroid.coords[0], 0)
+                for p in polygonize(overlap)]
     
     return [Poly(overlap.exterior.coords,
                  overlap.centroid.coords[0], 0)]
