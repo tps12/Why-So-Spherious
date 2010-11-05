@@ -100,8 +100,10 @@ def intersect(a, b):
         polygons.append(Polygon([offset(p, dx, dy)
                                  for p in polygon.exterior.coords]))
     ap, bp = polygons[0], polygons[1]
+    overlap = ap.intersection(bp)
     
-    return Poly(ap.intersection(bp).exterior.coords, a.position, 0)
+    return Poly(overlap.exterior.coords,
+                overlap.centroid.coords[0], 0)
 
 background = Surface(screen.get_size())
 background.fill((128,128,128))
