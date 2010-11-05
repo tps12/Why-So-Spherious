@@ -103,6 +103,9 @@ def intersect(a, b):
     ap, bp = polygons[0], polygons[1]
     overlap = ap.intersection(bp)
 
+    if overlap.is_empty:
+        return []
+
     if not hasattr(overlap, 'exterior'):
         ps = [p for p in polygonize(overlap)]
         overlap = ps[0]
