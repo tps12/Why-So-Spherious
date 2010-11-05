@@ -83,15 +83,7 @@ def in_poly(point, poly):
     return polygon.contains(Point(offset(unscale(point), -dx, -dy)))
 
 def move_poly(poly, point):
-    polygon = Polygon(poly.points)
-    if poly.orientation:
-        c = polygon.centroid.coords[0]
-        polygon = Polygon([rotate(p, c, -poly.orientation)
-                           for p in polygon.exterior.coords])
-    c = polygon.centroid.coords[0]
-    p = poly.position
-    dx, dy = [p[i] - c[i] for i in range(2)]
-    return offset(unscale(point), -dx, -dy)
+    return unscale(point)
 
 background = Surface(screen.get_size())
 background.fill((128,128,128))
@@ -119,16 +111,13 @@ while not done:
                     break
             else:
                 dragging = None
-        elif e.type == MOUSEBUTTONUP and not dragging is None:
-            polys[dragging].position = move_poly(polys[dragging],
-                                                 mouse.get_pos())
+        elif e.type == MOUSEBUTTONUP:
             dragging = None
 
     if not dragging is None:
         polys[dragging].position = move_poly(polys[dragging],
                                              mouse.get_pos())
-            
-
+        
     sprites.empty()
     for poly in polys:
         sprite = Sprite()
