@@ -82,9 +82,6 @@ def in_poly(point, poly):
     dx, dy = [p[i] - c[i] for i in range(2)]
     return polygon.contains(Point(offset(unscale(point), -dx, -dy)))
 
-def move_poly(poly, point):
-    return unscale(point)
-
 background = Surface(screen.get_size())
 background.fill((128,128,128))
 
@@ -115,8 +112,7 @@ while not done:
             dragging = None
 
     if not dragging is None:
-        polys[dragging].position = move_poly(polys[dragging],
-                                             mouse.get_pos())
+        polys[dragging].position = unscale(mouse.get_pos())
         
     sprites.empty()
     for poly in polys:
