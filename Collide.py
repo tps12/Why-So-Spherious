@@ -1,4 +1,4 @@
-from shapely.geometry import Point, Polygon
+from shapely.geometry import MultiPoint, Point, Polygon
 from shapely.ops import polygonize
 
 from math import *
@@ -63,6 +63,14 @@ def orient_polygon(poly):
                            for p in polygon.exterior.coords])
     return polygon
 
+def orient_multipoint(poly):
+    polygon = MultiPoint(poly.points)
+    if poly.orientation:
+        c = polygon.centroid.coords[0]
+        polygon = Polygon([rotate((p.x,p.y), c, -poly.orientation)
+                           for p in polygon.geoms])
+    return polygon
+
 def draw_poly(poly, surface, color=None, width=None):
     polygon = orient_polygon(poly)
     c = polygon.centroid.coords[0]
@@ -83,6 +91,22 @@ def draw_poly(poly, surface, color=None, width=None):
                     defloat(scale(offset(c, dx, dy))),
                     3*width)
 
+def draw_points(poly, surface, color=None, width=None):
+    polygon = orient_multipoint(poly)
+    c = polygon.centroid.coords[0]
+    p = poly.position
+    dx, dy = [p[i] - c[i] for i in range(2)]
+
+    if color is None:
+        color = (0,255,0)
+    if width is None:
+        width = 1
+
+    for p in polygon.geoms:
+        draw.circle(surface, color,
+                    defloat(scale(offset((p.x,p.y), dx, dy))),
+                    3*width)
+
 def in_poly(point, poly):
     polygon = orient_polygon(poly)
     c = polygon.centroid.coords[0]
@@ -90,17 +114,16 @@ def in_poly(point, poly):
     dx, dy = [p[i] - c[i] for i in range(2)]
     return polygon.contains(Point(offset(unscale(point), -dx, -dy)))
 
+def orient_offset_polygon(poly):
+    polygon = orient_polygon(poly)
+    c = polygon.centroid.coords[0]
+    p = poly.position
+    dx, dy = [p[i] - c[i] for i in range(2)]
+    return Polygon([offset(p, dx, dy)
+                    for p in polygon.exterior.coords])
+
 def intersect(a, b):
-    polygons = []
-    
-    for poly in [a, b]:
-        polygon = orient_polygon(poly)
-        c = polygon.centroid.coords[0]
-        p = poly.position
-        dx, dy = [p[i] - c[i] for i in range(2)]
-        polygons.append(Polygon([offset(p, dx, dy)
-                                 for p in polygon.exterior.coords]))
-    ap, bp = polygons[0], polygons[1]
+    ap, bp = [orient_offset_polygon(p) for p in [a,b]]
     overlap = ap.intersection(bp)
 
     if overlap.is_empty:
@@ -112,6 +135,15 @@ def intersect(a, b):
     
     return [Poly(overlap.exterior.coords,
                  overlap.centroid.coords[0], 0)]
+
+def intersect_boundaries(a, b):
+    ap, bp = [orient_offset_polygon(p) for p in [a,b]]
+    intersection = ap.boundary.intersection(bp.boundary)
+    if hasattr(intersection, 'geoms'):
+        points = [(p.x, p.y) for p in intersection.geoms]
+        return Poly(points, intersection.centroid.coords[0], 0)
+    else:
+        return None
 
 background = Surface(screen.get_size())
 background.fill((128,128,128))
@@ -162,6 +194,13 @@ while not done:
                 draw_poly(intersection, sprite.image, (255,255,0), 0)
                 sprite.rect = Rect((0,0), sprite.image.get_size())
                 sprites.add(sprite)
+            boundaries = intersect_boundaries(poly, other)
+            if not boundaries is None:
+                common = Sprite()
+                common.image = Surface(screen.get_size(), flags=SRCALPHA)
+                draw_points(boundaries, common.image, (255,0,0))
+                common.rect = Rect((0,0), common.image.get_size())
+                sprites.add(common)
 
     sprites.clear(screen, background)
     sprites.draw(screen)
