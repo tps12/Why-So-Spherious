@@ -102,10 +102,22 @@ def draw_points(poly, surface, color=None, width=None):
     if width is None:
         width = 1
 
-    for p in polygon.geoms:
+    maxd = (0,None,None)
+    for i in range(len(polygon.geoms)):
+        p = polygon.geoms[i]
         draw.circle(surface, color,
                     defloat(scale(offset((p.x,p.y), dx, dy))),
                     3*width)
+        for j in range(i+1, len(polygon.geoms)):
+            q = polygon.geoms[j]
+            d = p.distance(q)
+            if d > maxd[0]:
+                maxd = (d, p, q)
+    if maxd[0] > 0:
+        p, q = maxd[1], maxd[2]
+        draw.line(surface, color,
+                  defloat(scale(offset((p.x,p.y), dx, dy))),
+                  defloat(scale(offset((q.x,q.y), dx, dy))), width)
 
 def in_poly(point, poly):
     polygon = orient_polygon(poly)
