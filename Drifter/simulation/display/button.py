@@ -10,3 +10,6 @@ class Button(object):
     def draw(self, surface):
         surface.fill((255,255,255), self._image.get_rect())
         surface.blit(self._image, (0,0))
+
+    def click(self, location):
+        self._click()

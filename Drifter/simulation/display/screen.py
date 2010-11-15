@@ -44,6 +44,15 @@ class Screen(object):
             elif e.type == MOUSEBUTTONUP and e.button == 1:
                 self._drag_start = None
 
+                p = mouse.get_pos()
+                w, h = self.size
+                dw = 0
+                for c in self._controls:
+                    dw += c.width
+                    if w - dw <= p[0] < w - dw + c.width:
+                        c.click((p[0] - (w - dw), p[1]))
+                        break
+
         self._screen.blit(self._background, (0,0))
         display.flip()
 

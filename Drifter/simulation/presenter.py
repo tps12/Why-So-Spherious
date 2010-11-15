@@ -8,9 +8,10 @@ class Presenter(object):
     def __init__(self, model, view):
         self._view = view
         self._view.set_projection_options([SineProjection, FlatProjection],
-                                          lambda p: None)
+                                          self._set_projection)
 
         self._rotation = quat(1)
+        self._projection = SineProjection(self._view.map_size)
         
         self._view.map_size_changed = self.view_map_size_changed
         self.view_map_size_changed(self._view.map_size)
@@ -26,8 +27,12 @@ class Presenter(object):
         q = quat(0,v[0],v[1],v[2])
         return ((self._rotation*q)/self._rotation).q[1:4]
 
+    def _set_projection(self, cls):
+        self._projection = cls(self._view.map_size)
+        self.view_map_size_changed(self._view.map_size)
+
     def view_map_size_changed(self, size):
-        self._projection = SineProjection(size)
+        self._projection = self._projection.__class__(size)
         self._view.fill_background_rows((0,0,128),
                                         self._projection.get_background_rows())
         for i in range(3):
