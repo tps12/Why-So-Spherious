@@ -16,8 +16,8 @@ class SineProjection(object):
                              for row in range(0,int(pi/self.dtheta))]
                             if l > 0]
         self.row_count = len(self.row_lengths)
-        max_row = max(self.row_lengths)
-        self.row_offsets = [int((max_row - row_length)/2.0 + 0.5)
+        self.max_row = max(self.row_lengths)
+        self.row_offsets = [int((self.max_row - row_length)/2.0 + 0.5)
                             for row_length in self.row_lengths]
     
     def get_coordinates(self, row, column):
@@ -34,8 +34,45 @@ class SineProjection(object):
         lon = atan2(v[1], v[0])
         return self.get_coordinates_from_lat_lon(lat, lon)
 
+    def _wrap(self, v1, v2):
+        # projection wraps if projected midpoint is not horizontally between
+        # projected points
+        th, axis = self.get_rotation(v1, v2)
+        mid = self._rotate(v1, axis, th/2)
+
+        p1, m, p2 = [self.vector_to_xy(v) for v in (v1, mid, v2)]
+        return not (p1[0] <= m[0] <= p2[0] or
+                    p2[0] <= m[0] <= p1[0])
+        
+    def _rotate(self, p, axis, theta):
+        # http://inside.mines.edu/~gmurray/ArbitraryAxisRotation/ArbitraryAxisRotation.html
+        L2 = sum([i*i for i in axis])
+        return array([(axis[0]*sum(p * axis) +
+                       (p[0]*(axis[1]*axis[1]+axis[2]*axis[2]) +
+                        axis[0]*(-axis[1]*p[1]-axis[2]*p[2])) * cos(theta) +
+                       sqrt(L2)*(-axis[2]*p[1]+axis[1]*p[2]) * sin(theta))/L2,
+                      (axis[1]*sum(p * axis) +
+                       (p[1]*(axis[0]*axis[0]+axis[2]*axis[2]) +
+                        axis[1]*(-axis[0]*p[0]-axis[2]*p[2])) * cos(theta) +
+                       sqrt(L2)*(axis[2]*p[0]-axis[0]*p[2]) * sin(theta))/L2,
+                      (axis[2]*sum(p * axis) +
+                       (p[2]*(axis[0]*axis[0]+axis[1]*axis[1]) +
+                        axis[2]*(-axis[0]*p[0]-axis[1]*p[1])) * cos(theta) +
+                       sqrt(L2)*(-axis[1]*p[0]+axis[0]*p[1]) * sin(theta))/L2])
+
     def poly_to_xy_lists(self, vs):
-        return [[self.vector_to_xy(v) for v in vs]]
+        ps = []
+        last = None
+        for v in vs:
+            if last is not None:
+                if self._wrap(last, v):
+                    ps.append([self.vector_to_xy(v)])
+                else:
+                    ps[-1].append(self.vector_to_xy(v))
+            else:
+                ps.append([self.vector_to_xy(v)])
+            last = v
+        return ps
 
     def get_row_column(self, x, y):
         row = y
