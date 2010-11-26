@@ -28,7 +28,10 @@ class View(object):
         return (screen_size[0] - self._controls.width, screen_size[1])
 
     def step(self):
-        return self._screen.step()
+        class Dot:
+            color = (63,63,190)
+            location = (48, 158)
+        return self._screen.step([Dot()])
 
     def fill_background_rows(self, color, rows):
         self._screen.fill_background_rows(color, rows)
@@ -38,6 +41,9 @@ class View(object):
 
     def draw_controls(self):
         self._screen.draw_controls()
+
+    def paint_background(self):
+        self._screen.paint_background()
 
     def _screen_size_changed(self, size):
         self.map_size_changed(self.map_size)

@@ -1,6 +1,7 @@
 import pygame
 from pygame import display, draw, event, mouse, Rect, Surface
 from pygame.locals import *
+from pygame.sprite import *
 
 class Screen(object):
     def __init__(self, size, caption, icon_caption):
@@ -9,6 +10,8 @@ class Screen(object):
         self._make_screen(size)
 
         self._controls = []
+
+        self._sprites = Group()
 
         self._drag_start = None
         self.dragged = lambda start, end: None
@@ -21,7 +24,7 @@ class Screen(object):
     def size(self):
         return self._screen.get_size()
 
-    def step(self):
+    def step(self, dots):
         for e in event.get():
             if e.type == QUIT:
                 return True
@@ -51,7 +54,18 @@ class Screen(object):
                         c.click((p[0] - (w - dw), p[1]))
                         break
 
-        self._screen.blit(self._background, (0,0))
+        self._sprites.empty()
+
+        for dot in dots:
+            sprite = Sprite()
+            sprite.image = pygame.Surface((6,6))
+            draw.circle(sprite.image, dot.color, (3,3), 3)
+            sprite.rect = Rect(tuple([int(c) for c in dot.location]), (6, 6))
+            self._sprites.add(sprite)
+        
+        self._sprites.clear(self._screen, self._background)
+        self._sprites.draw(self._screen)
+        
         display.flip()
 
         return False
@@ -74,6 +88,9 @@ class Screen(object):
         for c in self._controls:
             dw += c.width
             c.draw(self._background.subsurface(Rect(w - dw, 0, c.width, h)))
+
+    def paint_background(self):
+        self._screen.blit(self._background, (0,0))
             
     def add(self, control):
         self._controls.append(control)

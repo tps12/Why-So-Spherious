@@ -44,6 +44,8 @@ class Presenter(object):
 
         self._view.draw_controls()
 
+        self._view.paint_background()
+
     def map_dragged(self, start, end):
         th, u = self._projection.get_xy_rotation(start[0], start[1],
                                                  end[0], end[1])
