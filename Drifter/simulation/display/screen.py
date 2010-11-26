@@ -60,7 +60,7 @@ class Screen(object):
             sprite = Sprite()
             sprite.image = pygame.Surface((6,6))
             draw.circle(sprite.image, dot.color, (3,3), 3)
-            sprite.rect = Rect(tuple([int(c) for c in dot.location]), (6, 6))
+            sprite.rect = Rect(tuple([int(c) - 3 for c in dot.location]), (6, 6))
             self._sprites.add(sprite)
         
         self._sprites.clear(self._screen, self._background)
@@ -77,10 +77,6 @@ class Screen(object):
         for i in range(len(rows)):
             for start, length in rows[i]:
                 self._background.fill(color, Rect(start, i, length, 1))
-
-    def draw_dot(self, color, location):
-        draw.circle(self._background, color,
-                    tuple([int(c) for c in location]), 3)
 
     def draw_controls(self):
         w, h = self.size

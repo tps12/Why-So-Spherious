@@ -21,7 +21,19 @@ class Presenter(object):
 
     def run(self):
         while True:
-            if self._view.step():
+            class Dot:
+                color = None
+                location = None
+
+            axes = [None for i in range(3)]
+            for i in range(3):
+                dot = Dot()
+                axis = tuple([1 if j == i else 0 for j in range(3)])
+                dot.color = tuple([255*c for c in axis])
+                dot.location = self._rotate_and_project(axis)
+                axes[i] = dot
+            
+            if self._view.step(axes):
                 break
 
     def _rotate(self, v):
@@ -32,15 +44,13 @@ class Presenter(object):
         self._projection = cls(self._view.map_size)
         self.view_map_size_changed(self._view.map_size)
 
+    def _rotate_and_project(self, v):
+        return self._projection.vector_to_xy(self._rotate(v))
+
     def view_map_size_changed(self, size):
         self._projection = self._projection.__class__(size)
         self._view.fill_background_rows((0,0,128),
                                         self._projection.get_background_rows())
-        for i in range(3):
-            axis = tuple([1 if j == i else 0 for j in range(3)])
-            color = tuple([255*c for c in axis])
-            self._view.draw_dot(color,
-                                self._projection.vector_to_xy(self._rotate(axis)))
 
         self._view.draw_controls()
 
