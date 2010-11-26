@@ -29,12 +29,15 @@ class Presenter(object):
                 axes[i] = Dot(tuple([255*c for c in axis]),
                               self._rotate_and_project(axis))
 
-            loc = self._rotate_and_project((1,0,0))
             ps = [self._rotate_and_project((1,0,0)),
                   self._rotate_and_project((0,1,0))]
-            shapes = [Shape((0,200,200), loc,
-                            [(ps[0][0]-loc[0],ps[0][1]-loc[1]),
-                             (ps[1][0]-loc[0],ps[1][1]-loc[1])])]
+            x, y = self._view.map_size
+            for p in ps:
+                x = min(x, p[0])
+                y = min(y, p[1])
+            shapes = [Shape((0,200,200), (x,y),
+                            [(ps[0][0]-x,ps[0][1]-y),
+                             (ps[1][0]-x,ps[1][1]-y)])]
             
             if self._view.step(axes, shapes):
                 break
