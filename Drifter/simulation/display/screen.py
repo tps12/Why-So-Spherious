@@ -16,8 +16,6 @@ class Screen(object):
 
     def _make_screen(self, size):
         self._screen = display.set_mode(size, HWSURFACE | RESIZABLE)
-        self._background = Surface(self._screen.get_size())
-        self._background.fill((128,128,128))
 
     @property
     def size(self):
@@ -59,6 +57,9 @@ class Screen(object):
         return False
 
     def fill_background_rows(self, color, rows):
+        self._background = Surface(self._screen.get_size())
+        self._background.fill((128,128,128))
+        
         for i in range(len(rows)):
             for start, length in rows[i]:
                 self._background.fill(color, Rect(start, i, length, 1))

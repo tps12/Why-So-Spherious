@@ -44,5 +44,7 @@ class View(object):
 
     def set_projection_options(self, projections, handler):
         for p in projections:
-            self._projection_buttons.add(Button(p.name, lambda: handler(p)))
+            def func(p = p):
+                handler(p)
+            self._projection_buttons.add(Button(p.name, func))
             
