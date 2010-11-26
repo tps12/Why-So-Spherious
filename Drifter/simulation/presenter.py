@@ -6,17 +6,18 @@ from util.quat import quat
 
 class Presenter(object):   
     def __init__(self, model, view):
+        projections = [SineProjection, FlatProjection]
+        
         self._view = view
-        self._view.set_projection_options([SineProjection, FlatProjection],
+        self._view.set_projection_options(projections,
                                           self._set_projection)
 
         self._rotation = quat(1)
-        self._projection = SineProjection(self._view.map_size)
         
         self._view.map_size_changed = self.view_map_size_changed
-        self.view_map_size_changed(self._view.map_size)
-
         self._view.map_dragged = self.map_dragged
+
+        self._set_projection(projections[0])
 
     def run(self):
         while True:
