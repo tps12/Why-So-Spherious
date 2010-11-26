@@ -42,14 +42,17 @@ class Presenter(object):
                            (0.15,7*pi/4)])
 
             ps = layer.project((1,0,0),(0.99,0.01,0))
+            shapes = []
             for s in self._rotate_and_project_poly(ps):
+                if not len(s):
+                    continue
                 x, y = self._view.map_size
                 for p in s:
                     x = min(x, p[0])
                     y = min(y, p[1])
                 s.append(s[0])
-                shapes = [Shape((0,200,200), (x,y),
-                                [(p[0]-x,p[1]-y) for p in s])]
+                shapes.append(Shape((0,200,200), (x,y),
+                                    [(p[0]-x,p[1]-y) for p in s]))
             
             if self._view.step(axes, shapes):
                 break
