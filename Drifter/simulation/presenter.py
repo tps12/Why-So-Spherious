@@ -1,5 +1,6 @@
 from math import *
 
+from landmass.layer import Layer
 from projection.sinusoid import SineProjection
 from projection.flat import FlatProjection
 from shapes.dot import Dot
@@ -29,15 +30,26 @@ class Presenter(object):
                 axes[i] = Dot(tuple([255*c for c in axis]),
                               self._rotate_and_project(axis))
 
-            ps = [(1,0,0),(0,1,0)]
+            layer = Layer([(0.2,pi/4),
+                           (0.1,pi/2),
+                           (0.2,5*pi/8),
+                           (0.25,7*pi/8),
+                           (0.25,pi),
+                           (0.15,3*pi/4),
+                           (0.1,5*pi/4),
+                           (0.3,5*pi/4),
+                           (0.2,3*pi/2),
+                           (0.15,7*pi/4)])
+
+            ps = layer.project((1,0,0),(0.99,0.01,0))
             for s in self._rotate_and_project_poly(ps):
                 x, y = self._view.map_size
                 for p in s:
                     x = min(x, p[0])
                     y = min(y, p[1])
+                s.append(s[0])
                 shapes = [Shape((0,200,200), (x,y),
-                                [(s[0][0]-x,s[0][1]-y),
-                                 (s[1][0]-x,s[1][1]-y)])]
+                                [(p[0]-x,p[1]-y) for p in s])]
             
             if self._view.step(axes, shapes):
                 break
