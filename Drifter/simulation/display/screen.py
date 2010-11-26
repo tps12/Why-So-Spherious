@@ -24,7 +24,7 @@ class Screen(object):
     def size(self):
         return self._screen.get_size()
 
-    def step(self, dots):
+    def step(self, dots, shapes):
         for e in event.get():
             if e.type == QUIT:
                 return True
@@ -62,7 +62,17 @@ class Screen(object):
                                           flags=SRCALPHA)
             draw.circle(sprite.image, dot.color,
                         (dot.radius,dot.radius), dot.radius)
-            sprite.rect = Rect(tuple([int(c) - 3 for c in dot.location]),
+            sprite.rect = Rect(tuple([int(c) - dot.radius for c in dot.location]),
+                               sprite.image.get_size())
+            self._sprites.add(sprite)
+
+        for shape in shapes:
+            sprite = Sprite()
+            sprite.image = pygame.Surface((int(shape.width), int(shape.height)),
+                                          flags=SRCALPHA)
+            draw.lines(sprite.image, shape.color, False,
+                       [tuple([int(c) for c in p]) for p in shape.points])
+            sprite.rect = Rect(tuple([int(c) for c in shape.location]),
                                sprite.image.get_size())
             self._sprites.add(sprite)
         

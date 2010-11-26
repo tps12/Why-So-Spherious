@@ -3,6 +3,7 @@ from math import *
 from projection.sinusoid import SineProjection
 from projection.flat import FlatProjection
 from shapes.dot import Dot
+from shapes.shape import Shape
 from util.quat import quat
 
 class Presenter(object):   
@@ -27,8 +28,15 @@ class Presenter(object):
                 axis = tuple([1 if j == i else 0 for j in range(3)])
                 axes[i] = Dot(tuple([255*c for c in axis]),
                               self._rotate_and_project(axis))
+
+            loc = self._rotate_and_project((1,0,0))
+            ps = [self._rotate_and_project((1,0,0)),
+                  self._rotate_and_project((0,1,0))]
+            shapes = [Shape((0,200,200), loc,
+                            [(ps[0][0]-loc[0],ps[0][1]-loc[1]),
+                             (ps[1][0]-loc[0],ps[1][1]-loc[1])])]
             
-            if self._view.step(axes):
+            if self._view.step(axes, shapes):
                 break
 
     def _rotate(self, v):
