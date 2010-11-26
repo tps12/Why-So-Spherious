@@ -58,9 +58,12 @@ class Screen(object):
 
         for dot in dots:
             sprite = Sprite()
-            sprite.image = pygame.Surface((6,6))
-            draw.circle(sprite.image, dot.color, (3,3), 3)
-            sprite.rect = Rect(tuple([int(c) - 3 for c in dot.location]), (6, 6))
+            sprite.image = pygame.Surface((2 * dot.radius, 2 * dot.radius),
+                                          flags=SRCALPHA)
+            draw.circle(sprite.image, dot.color,
+                        (dot.radius,dot.radius), dot.radius)
+            sprite.rect = Rect(tuple([int(c) - 3 for c in dot.location]),
+                               sprite.image.get_size())
             self._sprites.add(sprite)
         
         self._sprites.clear(self._screen, self._background)
