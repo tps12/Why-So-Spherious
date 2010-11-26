@@ -70,8 +70,11 @@ class Screen(object):
             sprite = Sprite()
             sprite.image = pygame.Surface((int(shape.width), int(shape.height)),
                                           flags=SRCALPHA)
-            draw.lines(sprite.image, shape.color, False,
-                       [tuple([int(c) for c in p]) for p in shape.points])
+            points = [tuple([int(c) for c in p]) for p in shape.points]
+            if len(points) > 2:
+                draw.polygon(sprite.image, shape.color, points)
+            else:
+                draw.lines(sprite.image, shape.color, False, points)
             sprite.rect = Rect(tuple([int(c) for c in shape.location]),
                                sprite.image.get_size())
             self._sprites.add(sprite)

@@ -1,6 +1,5 @@
 from math import *
 
-from landmass.layer import Layer
 from projection.sinusoid import SineProjection
 from projection.flat import FlatProjection
 from shapes.dot import Dot
@@ -10,6 +9,8 @@ from util.quat import quat
 class Presenter(object):   
     def __init__(self, model, view):
         projections = [SineProjection, FlatProjection]
+
+        self._model = model
         
         self._view = view
         self._view.set_projection_options(projections,
@@ -30,29 +31,21 @@ class Presenter(object):
                 axes[i] = Dot(tuple([255*c for c in axis]),
                               self._rotate_and_project(axis))
 
-            layer = Layer([(0.2,pi/4),
-                           (0.1,pi/2),
-                           (0.2,5*pi/8),
-                           (0.25,7*pi/8),
-                           (0.25,pi),
-                           (0.15,3*pi/4),
-                           (0.1,5*pi/4),
-                           (0.3,5*pi/4),
-                           (0.2,3*pi/2),
-                           (0.15,7*pi/4)])
-
-            ps = layer.project((1,0,0),(0.99,0.01,0))
             shapes = []
-            for s in self._rotate_and_project_poly(ps):
-                if not len(s):
-                    continue
-                x, y = self._view.map_size
-                for p in s:
-                    x = min(x, p[0])
-                    y = min(y, p[1])
-                s.append(s[0])
-                shapes.append(Shape((0,200,200), (x,y),
-                                    [(p[0]-x,p[1]-y) for p in s]))
+            for o in self._model.objects:
+                color = o.color
+                for ps in o.project_layers():
+                    for s in self._rotate_and_project_poly(ps):
+                        if not len(s):
+                            continue
+                        x, y = self._view.map_size
+                        for p in s:
+                            x = min(x, p[0])
+                            y = min(y, p[1])
+                        s.append(s[0])
+                        shapes.append(Shape(color, (x,y),
+                                            [(p[0]-x,p[1]-y) for p in s]))
+                    color = tuple([min(255, color[i] + 10) for i in range(3)])
             
             if self._view.step(axes, shapes):
                 break
