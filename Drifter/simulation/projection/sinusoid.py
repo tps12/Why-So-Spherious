@@ -35,13 +35,12 @@ class SineProjection(object):
         return self.get_coordinates_from_lat_lon(lat, lon)
 
     def _wrap(self, v1, v2):
-        # projection wraps if projected midpoint is much closer to one than other
+        # projection wraps if projected midpoint far from midpoint of projections
         th, axis = self.get_rotation(v1, v2)
         mid = self._rotate(v1, axis, th/2)
 
         p1, m, p2 = [self.vector_to_xy(v) for v in (v1, mid, v2)]
-        d1, d2 = [abs(p[0] - m[0]) for p in p1, p2]
-        return d1 > 10*d2 or d2 > 10*d1
+        return abs((p1[0]+p2[0])/2 - m[0]) > self.max_row / 100.0
         
     def _rotate(self, p, axis, theta):
         # http://inside.mines.edu/~gmurray/ArbitraryAxisRotation/ArbitraryAxisRotation.html
