@@ -34,6 +34,9 @@ class SineProjection(object):
         lon = atan2(v[1], v[0])
         return self.get_coordinates_from_lat_lon(lat, lon)
 
+    def poly_to_xy_lists(self, vs):
+        return [[self.vector_to_xy(v) for v in vs]]
+
     def get_row_column(self, x, y):
         row = y
         return (row,

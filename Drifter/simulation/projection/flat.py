@@ -18,6 +18,9 @@ class FlatProjection(object):
             x = 4 * self._radius - x
         return x, y
 
+    def poly_to_xy_lists(self, vs):
+        return [[self.vector_to_xy(v) for v in vs]]
+
     def get_background_rows(self):
         rows = []
         r2 = self._radius * self._radius
