@@ -28,7 +28,6 @@ class Presenter(object):
         return ((self._rotation*q)/self._rotation).q[1:4]
 
     def _set_projection(self, cls):
-        print cls
         self._projection = cls(self._view.map_size)
         self.view_map_size_changed(self._view.map_size)
 
